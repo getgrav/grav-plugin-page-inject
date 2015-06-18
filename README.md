@@ -35,9 +35,9 @@ the `processed_content` option means the page is pre-rendered before being injec
 
 # Usage
 
-There are two ways to use this plugin:
+There are two ways to use this plugin in your markdown content:
 
-1. **Page Inject**
+1. **Page Injection**
 
     ```
     [plugin:page-inject](/route/to/page)
@@ -49,7 +49,7 @@ There are two ways to use this plugin:
     [plugin:page-inject](/route/to/page?template=custom-template)
     ```
 
-2. **Content Inject**
+2. **Content Injection**
 
     ```
     [plugin:content-inject](/route/to/page)
