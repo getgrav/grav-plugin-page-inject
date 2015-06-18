@@ -16,8 +16,6 @@ use RocketTheme\Toolbox\Event\Event;
 
 class PageInjectPlugin extends Plugin
 {
-    const YOUTUBE_REGEX = '(.*)';
-
     /**
      * Return a list of subscribed events.
      *
