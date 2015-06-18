@@ -62,7 +62,7 @@ class PageInjectPlugin extends Plugin
             $raw = $page->getRawContent();
 
             // build an anonymous function to pass to `parseLinks()`
-            $function = function ($matches) use (&$page, &$twig) {
+            $function = function ($matches) use (&$page, &$twig, &$config) {
 
                 $search = $matches[0];
                 $type = $matches[1];
@@ -79,7 +79,12 @@ class PageInjectPlugin extends Plugin
                         $replace = $twig->processPage($inject);
 
                     } else {
-                        $replace = $inject->content();
+                        if ($config->get('processed_content')) {
+                            $replace = $inject->content();
+                        } else {
+                            $replace = $inject->rawMarkdown();
+                        }
+
                     }
 
                 } else {

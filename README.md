@@ -26,9 +26,12 @@ You should now have all the plugin files under
 
 ```
 enabled: true
+processed_content: true
 ```
 
 If you need to change any value, then the best process is to copy the [page-inject.yaml](page-inject.yaml) file into your `users/config/plugins/` folder (create it if it doesn't exist), and then modify there.  This will override the default settings.
+
+the `processed_content` option means the page is pre-rendered before being injected.  This is the default behavior and means that relative image links and other path-sensitive content works correctly.  You can however set this to `false` and then the raw markdown is inject and processed along with the rest of the current page. This is releavant for `content-inject` links **only**.
 
 # Usage
 
