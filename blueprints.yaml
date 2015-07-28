@@ -24,3 +24,15 @@ form:
         0: Disabled
       validate:
         type: bool
+
+    processed_content:
+      type: toggle
+      label: Processed Content
+      highlight: 1
+      default: 0
+      options:
+        1: Enabled
+        0: Disabled
+      validate:
+        type: bool
+      help: If enabled the page is pre-rendered before being injected, so relative paths work correctly
