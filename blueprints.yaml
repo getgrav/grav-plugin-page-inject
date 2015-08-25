@@ -1,5 +1,5 @@
 name: PageInject
-version: 1.0.0
+version: 1.1.0
 description: "**PageInject** is a powerful plugin that lets you inject entire pages or page content into other pages using simple markdown syntax"
 icon: trello
 author:
@@ -24,3 +24,15 @@ form:
         0: Disabled
       validate:
         type: bool
+
+    processed_content:
+      type: toggle
+      label: Processed Content
+      highlight: 1
+      default: 0
+      options:
+        1: Enabled
+        0: Disabled
+      validate:
+        type: bool
+      help: If enabled the page is pre-rendered before being injected, so relative paths work correctly
