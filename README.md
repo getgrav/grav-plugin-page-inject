@@ -1,10 +1,10 @@
-# Grav PageInject Plugin
+# Grav Page Inject Plugin
 
-`PageInject` is a powerful [Grav][grav] Plugin that lets you inject entire pages or page content into other pages using simple markdown syntax
+`Page Inject` is a powerful [Grav][grav] Plugin that lets you inject entire pages or page content into other pages using simple markdown syntax
 
 # Installation
 
-Installing the PageInject plugin can be done in one of two ways. Our GPM (Grav Package Manager) installation method enables you to quickly and easily install the plugin with a simple terminal command, while the manual method enables you to do so via a zip file.
+Installing the Page Inject plugin can be done in one of two ways. Our GPM (Grav Package Manager) installation method enables you to quickly and easily install the plugin with a simple terminal command, while the manual method enables you to do so via a zip file.
 
 ## GPM Installation (Preferred)
 
@@ -26,12 +26,25 @@ You should now have all the plugin files under
 
 ```
 enabled: true
+active: true
 processed_content: true
 ```
 
 If you need to change any value, then the best process is to copy the [page-inject.yaml](page-inject.yaml) file into your `users/config/plugins/` folder (create it if it doesn't exist), and then modify there.  This will override the default settings.
 
+The `active` option allows you to enable/disable the plugin site-wide, and then enable it on page via Page Config overrides. This is useful to optimize performance.
+
 the `processed_content` option means the page is pre-rendered before being injected.  This is the default behavior and means that relative image links and other path-sensitive content works correctly.  You can however set this to `false` and then the raw markdown is inject and processed along with the rest of the current page. This is releavant for `content-inject` links **only**.
+
+### Page Config
+
+You can override the plugin options by adding overrides in the page header frontmatter:
+
+```
+page-inject:
+    active: true
+    processed_content: true
+```
 
 # Usage
 

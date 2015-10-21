@@ -1,6 +1,6 @@
-name: PageInject
-version: 1.1.0
-description: "**PageInject** is a powerful plugin that lets you inject entire pages or page content into other pages using simple markdown syntax"
+name: Page Inject
+version: 1.1.1
+description: "**Page Inject** is a powerful plugin that lets you inject entire pages or page content into other pages using simple markdown syntax"
 icon: trello
 author:
   name: Team Grav
@@ -24,6 +24,18 @@ form:
         0: Disabled
       validate:
         type: bool
+
+    active:
+      type: toggle
+      label: Activate Site-Wide
+      highlight: 1
+      default: 1
+      options:
+        1: Enabled
+        0: Disabled
+      validate:
+        type: bool
+      help: This will ensure the plugin is activated site wide. You can override with page header options.
 
     processed_content:
       type: toggle
