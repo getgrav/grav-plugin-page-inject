@@ -25,14 +25,14 @@ class PageInjectPlugin extends Plugin
     public static function getSubscribedEvents()
     {
         return [
-            'onBuildPagesInitialized' => ['onBuildPagesInitialized', 0],
+            'onPluginsInitialized' => ['onPluginsInitialized', 0],
         ];
     }
 
     /**
      * Initialize configuration.
      */
-    public function onBuildPagesInitialized()
+    public function onPluginsInitialized()
     {
         if ($this->isAdmin()) {
             $this->active = false;
@@ -53,11 +53,12 @@ class PageInjectPlugin extends Plugin
     {
         /** @var Page $page */
         $page = $event['page'];
-        $twig = $this->grav['twig'];
 
         $config = $this->mergeConfig($page);
 
-        if ($config->get('enabled')) {
+        $twig = $this->grav['twig'];
+
+        if ($config->get('enabled') && $config->get('active')) {
             // Get raw content and substitute all formulas by a unique token
             $raw = $page->getRawContent();
 

@@ -25,6 +25,18 @@ form:
       validate:
         type: bool
 
+    active:
+      type: toggle
+      label: Activate Site-Wide
+      highlight: 1
+      default: 1
+      options:
+        1: Enabled
+        0: Disabled
+      validate:
+        type: bool
+      help: This will ensure the plugin is activated site wide. You can override with page header options.
+
     processed_content:
       type: toggle
       label: Processed Content
