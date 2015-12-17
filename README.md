@@ -12,7 +12,7 @@ The simplest way to install this plugin is via the [Grav Package Manager (GPM)](
 
     bin/gpm install page-inject
 
-This will install the YouTube plugin into your `/user/plugins` directory within Grav. Its files can be found under `/your/site/grav/user/plugins/page-inject`.
+This will install the Page Inject plugin into your `/user/plugins` directory within Grav. Its files can be found under `/your/site/grav/user/plugins/page-inject`.
 
 ## Manual Installation
 
