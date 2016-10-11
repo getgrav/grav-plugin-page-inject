@@ -77,7 +77,7 @@ class PageInjectPlugin extends Plugin
                             $inject->template($template);
                         }
                         $inject->modularTwig(true);
-                        $replace = $twig->processPage($inject);
+                        $replace = $inject->content();
 
                     } else {
                         if ($config->get('processed_content')) {
