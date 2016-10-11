@@ -12,6 +12,7 @@ namespace Grav\Plugin;
 use Grav\Common\Grav;
 use Grav\Common\Plugin;
 use Grav\Common\Page\Page;
+use Grav\Common\Uri;
 use RocketTheme\Toolbox\Event\Event;
 
 class PageInjectPlugin extends Plugin
@@ -70,6 +71,18 @@ class PageInjectPlugin extends Plugin
                 $page_path = $matches[3] ?: $matches[2];
                 $template = $matches[4];
 
+                // Process Link a little manually
+                $grav = Grav::instance();
+                $language = $grav['language'];
+                $language_append = '';
+                if ($type == 'link' && $language->enabled()) {
+                    $language_append = $language->getLanguageURLPrefix();
+                }
+                $base              = $grav['base_url_relative'];
+                $base_url          = rtrim($base . $grav['pages']->base(), '/') . $language_append;
+                $page_path = str_replace($base_url, '', Uri::convertUrl($page, $page_path));
+//                $page_path = Uri::convertUrl($page, $page_path, 'link', false, true);  // for next release
+
                 $inject = $page->find($page_path);
                 if ($inject) {
                     if ($type == 'page-inject') {
@@ -77,7 +90,7 @@ class PageInjectPlugin extends Plugin
                             $inject->template($template);
                         }
                         $inject->modularTwig(true);
-                        $replace = $twig->processPage($inject);
+                        $replace = $inject->content();
 
                     } else {
                         if ($config->get('processed_content')) {
@@ -85,7 +98,6 @@ class PageInjectPlugin extends Plugin
                         } else {
                             $replace = $inject->rawMarkdown();
                         }
-
                     }
 
                 } else {
