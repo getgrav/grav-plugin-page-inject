@@ -1,3 +1,9 @@
+# v1.3.0
+## 12/08/2017
+
+1. [](#new)
+    * Added multi-lang support to Page Inject plugin [#10](https://github.com/getgrav/grav-plugin-page-inject/issues/10)
+
 # v1.2.0
 ## 10/11/2016
 

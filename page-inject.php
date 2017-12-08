@@ -80,8 +80,8 @@ class PageInjectPlugin extends Plugin
                 }
                 $base              = $grav['base_url_relative'];
                 $base_url          = rtrim($base . $grav['pages']->base(), '/') . $language_append;
-                $page_path = str_replace($base_url, '', Uri::convertUrl($page, $page_path));
-//                $page_path = Uri::convertUrl($page, $page_path, 'link', false, true);  // for next release
+//                $page_path = str_replace($base_url, '', Uri::convertUrl($page, $page_path));
+                $page_path = Uri::convertUrl($page, $page_path, 'link', false, true);
 
                 $inject = $page->find($page_path);
                 if ($inject) {
