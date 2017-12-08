@@ -69,5 +69,7 @@ There are two ways to use this plugin in your markdown content:
     ```
 
     Sometimes you just want the content of another page injected directly into your current page.  Use `content-inject` for this purpose.  The content is not rendered with the assoicated twig template, merely injected into the current page.
+    
+Note: currently this plugin requires [absolute](https://learn.getgrav.org/content/linking#absolute) page paths.
 
 [grav]: http://github.com/getgrav/grav
