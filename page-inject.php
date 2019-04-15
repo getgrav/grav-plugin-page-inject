@@ -9,6 +9,7 @@
 
 namespace Grav\Plugin;
 
+use Grav\Common\Config\Config;
 use Grav\Common\Grav;
 use Grav\Common\Plugin;
 use Grav\Common\Page\Page;
@@ -55,9 +56,9 @@ class PageInjectPlugin extends Plugin
         /** @var Page $page */
         $page = $event['page'];
 
+        /** @var Config $config */
         $config = $this->mergeConfig($page);
 
-        $twig = $this->grav['twig'];
 
         if ($config->get('enabled') && $config->get('active')) {
             // Get raw content and substitute all formulas by a unique token
@@ -71,20 +72,12 @@ class PageInjectPlugin extends Plugin
                 $page_path = $matches[3] ?: $matches[2];
                 $template = $matches[4];
 
-                // Process Link a little manually
-                $grav = Grav::instance();
-                $language = $grav['language'];
-                $language_append = '';
-                if ($type == 'link' && $language->enabled()) {
-                    $language_append = $language->getLanguageURLPrefix();
-                }
-                $base              = $grav['base_url_relative'];
-                $base_url          = rtrim($base . $grav['pages']->base(), '/') . $language_append;
-//                $page_path = str_replace($base_url, '', Uri::convertUrl($page, $page_path));
                 $page_path = Uri::convertUrl($page, $page_path, 'link', false, true);
 
                 $inject = $page->find($page_path);
                 if ($inject) {
+                    // Force HTML to avoid issues with News Feeds
+                    $inject->templateFormat('html');
                     if ($type == 'page-inject') {
                         if ($template) {
                             $inject->template($template);
