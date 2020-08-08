@@ -56,7 +56,7 @@ There are four ways to use this plugin in your markdown content:
     [plugin:page-inject](/route/to/page)
     ```
 
-    This approach includes an entire page rendered with the associated template. This works best for modular page content or content that uses a specific template that provides apropriate styling that is intended to be part of other pages. You can also pass an optional template name and use that template to render the page (as long as you also provide the template in your theme):
+    This approach includes an entire page rendered with the associated template. This works best for modular page content or content that uses a specific template that provides appropriate styling that is intended to be part of other pages. You can also pass an optional template name and use that template to render the page (as long as you also provide the template in your theme):
 
     ```
     [plugin:page-inject](/route/to/page?template=custom-template)
