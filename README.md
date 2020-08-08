@@ -1,6 +1,6 @@
 # Grav Page Inject Plugin
 
-`Page Inject` is a powerful [Grav][grav] Plugin that lets you inject entire pages or page content into other pages using simple markdown syntax
+`Page Inject` is a powerful [Grav][grav] Plugin that lets you inject entire pages, page content or other markdown into a page using simple markdown syntax
 
 # Installation
 
@@ -48,7 +48,7 @@ page-inject:
 
 # Usage
 
-There are two ways to use this plugin in your markdown content:
+There are four ways to use this plugin in your markdown content:
 
 1. **Page Injection**
 
@@ -56,7 +56,7 @@ There are two ways to use this plugin in your markdown content:
     [plugin:page-inject](/route/to/page)
     ```
 
-    This approach includes an entire page rendered with the associated template.  This works best for modular page content or content that uses a specific template that provides appropriate styling that is intended to be part of other pages.  you can also pass an optional template name and use that template to render teh page (as long as you also provide the template in your theme):
+    This approach includes an entire page rendered with the associated template. This works best for modular page content or content that uses a specific template that provides apropriate styling that is intended to be part of other pages. You can also pass an optional template name and use that template to render the page (as long as you also provide the template in your theme):
 
     ```
     [plugin:page-inject](/route/to/page?template=custom-template)
@@ -68,6 +68,23 @@ There are two ways to use this plugin in your markdown content:
     [plugin:content-inject](/route/to/page)
     ```
 
-    Sometimes you just want the content of another page injected directly into your current page.  Use `content-inject` for this purpose.  The content is not rendered with the assoicated twig template, merely injected into the current page.
+    Sometimes you just want the content of another page injected directly into your current page.  Use `content-inject` for this purpose.  The content is not rendered with the associated Twig template, merely injected into the current page.
 
+3. **File Injection**
+
+    ```
+    [plugin:file-inject](/route/to/file)
+    ```
+
+    The plugin will look for the file starting at the Grav user directory. If the file exists it will inject it’s content. Just like with "page-inject", you can optionally use a custom template.
+
+1. **URL Injection**
+
+    ```
+    [plugin:url-inject](url)
+    ```
+
+    If the URL is valid the content of the file it points to is injected. The use of a custom template is supported.   
+    Injecting content from remote sites is relatively dangerous. You are advised to use the Twig `|escape` or `|striptags` filter in such a template.
+    
 [grav]: http://github.com/getgrav/grav

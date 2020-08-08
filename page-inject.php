@@ -77,6 +77,13 @@ class PageInjectPlugin extends Plugin
                     $user_path = $this->grav['locator']->findResource('user://');
                     if (file_exists($user_path . '/' . $page_path)) {
                         $replace = file_get_contents($user_path . '/' . $page_path);
+                        if ($template) {
+                            $replace = $this->grav['twig']->processTemplate($template, ['markdown' => $replace]);
+                        }
+
+                    } else {
+                        // replace with what you started with
+                        $replace = $matches[0];
                     }
 
                 } else {
@@ -86,7 +93,13 @@ class PageInjectPlugin extends Plugin
                         $headers = substr($headers[0], 9, 3);
                         if ($headers == "200") {
                             $replace = file_get_contents($page_path);
-                            $replace = $file;
+                            if ($template) {
+                                $replace = $this->grav['twig']->processTemplate($template, ['markdown' => $replace]);
+                            }
+                            
+                        } else {
+                            // replace with what you started with
+                            $replace = $matches[0];
                         }
 
                     } else {
