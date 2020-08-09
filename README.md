@@ -76,15 +76,15 @@ There are four ways to use this plugin in your markdown content:
     [plugin:file-inject](/route/to/file)
     ```
 
-    The plugin will look for the file starting at the Grav user directory. If the file exists it will inject it’s content. Just like with "page-inject", you can optionally use a custom template.
+    The plugin will look for the file starting at the Grav user directory. If the file exists it will inject it’s content. Just like with "page-inject", you can optionally use a custom template. The markdown content of the file will be available in a Twig variable named `markdown`.
 
-1. **URL Injection**
+4. **URL Injection**
 
     ```
     [plugin:url-inject](url)
     ```
 
-    If the URL is valid the content of the file it points to is injected. The use of a custom template is supported.   
-    Injecting content from remote sites is relatively dangerous. You are advised to use the Twig `|escape` or `|striptags` filter in such a template.
+    If the URL is valid the content of the file it points to is injected. The use of a custom template is supported. You can use the Twig variable `markdown` to process the requested markdown.   
+    Note: Injecting content from remote sites is relatively dangerous. You are advised to use the Twig `|escape` or `|striptags` filter in such a template.
     
 [grav]: http://github.com/getgrav/grav
