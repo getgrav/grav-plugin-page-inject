@@ -1,3 +1,9 @@
+# v1.4.0
+## mm/dd/2020
+
+1. [](#new)
+    * Added a new `taskPageInjectData` to be used by CKEditor5 integration
+    
 # v1.3.1
 ## 04/15/2019
 
