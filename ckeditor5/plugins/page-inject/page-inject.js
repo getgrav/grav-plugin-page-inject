@@ -36,33 +36,35 @@ window.ckeditor5.addHook('hookMarkdowntoHTML', {
 
     const items = [...output.matchAll(/\[plugin:(?<type>page|content)-inject\]\((?<route>[^?)]+)(?<query>\?[^)]*)?\)/g)];
 
-    if (items.length) {
-      const body = new FormData();
-      const reqUrl = `${window.GravAdmin.config.base_url_relative}/task:pageInjectData`;
+    const body = new FormData();
+    const reqUrl = `${window.GravAdmin.config.base_url_relative}/task:pageInjectData`;
 
-      items.forEach((matches) => {
-        body.append('routes[]', matches.groups.route);
-      });
+    items.forEach((matches) => {
+      body.append('routes[]', matches.groups.route);
+    });
 
-      const resp = await fetch(reqUrl, { body, method: 'POST' })
-        .then((resp) => (resp.ok ? resp.json() : null))
-        .then((resp) => (resp && resp.status !== 'error' ? resp : {}));
-      
-      availableTemplates = resp.available_templates;
-
-      const pages = resp.data
-        .filter((page) => page.status === 'success')
-        .reduce((acc, page) => ({ ...acc, [page.data.route]: page.data }), {});
-
-      items.forEach((matches) => {
-        const { type, route, query } = matches.groups;
-        const template = new URLSearchParams(query).get('template') || '';
-        const title = (pages[route] && pages[route].title) || '';
-        const modified = (pages[route] && pages[route].modified) || '';
-
-        output = output.replace(matches[0], `[[page-inject type="${type}" title="${title}" route="${route}" template="${template}" modified="${modified}"]]`);
-      });
+    if (!items.length) {
+      body.append('routes[]', 'not_exists_route');
     }
+
+    const resp = await fetch(reqUrl, { body, method: 'POST' })
+      .then((resp) => (resp.ok ? resp.json() : null))
+      .then((resp) => (resp && resp.status !== 'error' ? resp : {}));
+    
+    availableTemplates = resp.available_templates;
+
+    const pages = resp.data
+      .filter((page) => page.status === 'success')
+      .reduce((acc, page) => ({ ...acc, [page.data.route]: page.data }), {});
+
+    items.forEach((matches) => {
+      const { type, route, query } = matches.groups;
+      const template = new URLSearchParams(query).get('template') || '';
+      const title = (pages[route] && pages[route].title) || '';
+      const modified = (pages[route] && pages[route].modified) || '';
+
+      output = output.replace(matches[0], `[[page-inject type="${type}" title="${title}" route="${route}" template="${template}" modified="${modified}"]]`);
+    });
 
     return output;
   },
