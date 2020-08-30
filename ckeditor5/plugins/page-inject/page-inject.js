@@ -110,36 +110,36 @@ window.ckeditor5.addHook('hookHTMLtoMarkdown', {
   },
 });
 
+class GravPageInjectCommand extends Command {
+  execute(params) {
+    showPagePicker((page) => {
+      const textPageInject = `
+        <page-inject
+          type="${params.type}"
+          title="${page.name}"
+          route="${page.value}"
+          template=""
+          modified="${page.modified}"
+        ></page-inject>`;
+
+      const viewPageInject = this.editor.data.processor.toView(textPageInject).getChild(0);
+      const modelPageInject = this.editor.data.toModel(viewPageInject).getChild(0);
+      const { parent } = this.editor.model.document.selection.focus;
+
+      this.editor.model.change((modelWriter) => {
+        if (parent && parent.name === 'paragraph' && parent.childCount === 0) {
+          modelWriter.remove(parent);
+        }
+
+        const insertPosition = findOptimalInsertionPosition(this.editor.model.document.selection, this.editor.model);
+        modelWriter.insert(modelPageInject, insertPosition);
+      });
+    });
+  }
+}
+
 window.ckeditor5.addPlugin('GravPageInject', {
   init() {
-    class GravPageInjectCommand extends Command {
-      execute(params) {
-        showPagePicker((page) => {
-          const textPageInject = `
-            <page-inject
-              type="${params.type}"
-              title="${page.name}"
-              route="${page.value}"
-              template=""
-              modified="${page.modified}"
-            ></page-inject>`;
-
-          const viewPageInject = this.editor.data.processor.toView(textPageInject).getChild(0);
-          const modelPageInject = this.editor.data.toModel(viewPageInject).getChild(0);
-          const { parent } = this.editor.model.document.selection.focus;
-
-          this.editor.model.change((modelWriter) => {
-            if (parent && parent.name === 'paragraph' && parent.childCount === 0) {
-              modelWriter.remove(parent);
-            }
-
-            const insertPosition = findOptimalInsertionPosition(this.editor.model.document.selection, this.editor.model);
-            modelWriter.insert(modelPageInject, insertPosition);
-          });
-        });
-      }
-    }
-
     this.editor.commands.add('page-inject', new GravPageInjectCommand(this.editor));
 
     this.editor.model.schema.register('page-inject', {
