@@ -1,0 +1,59 @@
+page-inject {
+  border: 1px solid #ccc;
+  display: block;
+  margin: 16px 0;
+}
+
+page-inject .pi-wrapper {
+  align-items: center;
+  display: flex;
+  margin: 8px 16px;
+}
+
+page-inject .pi-wrapper > div {
+  margin-left: 16px;
+}
+
+page-inject .pi-wrapper > div:before {
+  margin-right: 16px;
+  content: '|';
+}
+
+page-inject .pi-wrapper > div:first-child {
+  margin-left: 0;
+}
+
+page-inject .pi-wrapper > div:first-child:before {
+  display: none;
+}
+
+page-inject .pi-type {
+  font-weight: 700;
+}
+
+page-inject .pi-title {
+}
+
+page-inject .pi-route {
+}
+
+page-inject .pi-route-settings {
+  cursor: pointer;
+  height: 24px;
+  margin-left: 4px;
+  margin-top: -2px;
+  width: 24px;
+}
+
+page-inject .pi-template {
+}
+
+page-inject .pi-modified {
+}
+
+page-inject .pi-settings {
+  cursor: pointer;
+  height: 24px;
+  margin-left: auto;
+  width: 24px;
+}

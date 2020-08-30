@@ -35,6 +35,7 @@ class PageInjectPlugin extends Plugin
     {
         return [
             'onPluginsInitialized' => ['onPluginsInitialized', 0],
+            'registerCKEditor5Plugin' => ['registerCKEditor5Plugin', 0],
         ];
     }
 
@@ -191,5 +192,16 @@ class PageInjectPlugin extends Plugin
     {
         $regex = '/\[plugin:(content-inject|page-inject)\]\(((.*)\?template=(.*)|(.*))\)/i';
         return preg_replace_callback($regex, $function, $content);
+    }
+
+    public function registerCKEditor5Plugin($event) {
+        $plugins = $event['plugins'];
+
+        // page-inject
+        $plugins['css'][] = 'plugin://page-inject/ckeditor5/plugins/page-inject/page-inject.css';
+        $plugins['js'][] = 'plugin://page-inject/ckeditor5/plugins/page-inject/page-inject.js';
+
+        $event['plugins']  = $plugins;
+        return $event;
     }
 }
