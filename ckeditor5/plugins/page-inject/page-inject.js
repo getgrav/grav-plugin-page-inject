@@ -264,23 +264,18 @@ function getPageInject(editor, modelWriter, attributes) {
             title: 'Type',
             widget: {
               type: 'select',
-              values: {
-                ...itemTypes,
-              },
+              values: Object.keys(itemTypes).map((value) => ({ value, label: itemTypes[value] })),
             },
           },
           template: {
             title: 'Template',
             widget: {
               type: 'select',
-              values: {
-                '': '',
-                ...availableTemplates,
-              },
+              values: Object.keys(availableTemplates).map((value) => ({ value, label: availableTemplates[value] })),
             },
           },
         },
-        currentAttribures: {
+        currentAttributes: {
           type: pageInject.getAttribute('type'),
           template: pageInject.getAttribute('template'),
         },
