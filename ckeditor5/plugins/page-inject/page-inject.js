@@ -197,7 +197,7 @@ function getPageInject(editor, modelWriter, attributes) {
   const route = modelWriter.createElement('div', { class: 'pi-route' });
   modelWriter.append(route, container);
 
-  const routeLink = modelWriter.createElement('a', { target: '_blank', href: attributes.route || '' });
+  const routeLink = modelWriter.createElement('a_reserved', { target: '_blank', href: attributes.route || '' });
   modelWriter.appendText(attributes.route || '', routeLink);
   modelWriter.append(routeLink, route);
 
