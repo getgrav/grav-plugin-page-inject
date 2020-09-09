@@ -232,16 +232,19 @@ function getPageInject(editor, modelWriter, attributes) {
 
   modelWriter.append(routeSettings, container);
 
-  const templateValue = attributes.template
-    ? availableTemplates[attributes.template]
-      ? `${availableTemplates[attributes.template]} template`
-      : `${attributes.template} template`
-    : 'No template selected';
+  if (attributes.type === 'page') {
+    const templateValue = attributes.template
+      ? availableTemplates[attributes.template]
+        ? `${availableTemplates[attributes.template]} template`
+        : `${attributes.template} template`
+      : 'No template selected';
 
-  const template = modelWriter.createElement('div', { class: 'pi-template' });
-  modelWriter.appendText(templateValue, template);
-  modelWriter.append(template, container);
+    const template = modelWriter.createElement('div', { class: 'pi-template' });
+    modelWriter.appendText(templateValue, template);
+    modelWriter.append(template, container);
+  }
 
+  /*
   const modifiedValue = !isNaN(new Date(+attributes.modified))
     ? `Modified at ${new Date(+attributes.modified * 1000).toString()}`
     : 'No modified date';
@@ -249,6 +252,7 @@ function getPageInject(editor, modelWriter, attributes) {
   const modified = modelWriter.createElement('div', { class: 'pi-modified' });
   modelWriter.appendText(modifiedValue, modified);
   modelWriter.append(modified, container);
+  */
 
   const settings = getGearButton(modelWriter, { class: 'pi-settings' }, {
     click: (data, event) => {
@@ -271,7 +275,11 @@ function getPageInject(editor, modelWriter, attributes) {
             title: 'Template',
             widget: {
               type: 'select',
-              values: Object.keys(availableTemplates).map((value) => ({ value, label: availableTemplates[value] })),
+              values: [
+                { value: '', label: '' },
+                ...Object.keys(availableTemplates).map((value) => ({ value, label: availableTemplates[value] })),
+              ],
+              visible: ({ attributes }) => attributes.type === 'page',
             },
           },
         },
@@ -279,19 +287,23 @@ function getPageInject(editor, modelWriter, attributes) {
           type: pageInject.getAttribute('type'),
           template: pageInject.getAttribute('template'),
         },
-        changeAttribute(attrName, attrValue) {
+        changeAttribute(attrName, attrValue, change) {
+          const newAttributes = [...pageInject.getAttributes()]
+            .reduce((acc, pair) => ({ ...acc, [pair.shift()]: pair.pop() }), {});
+
+          newAttributes[attrName] = attrValue;
+
           editor.model.change((modelWriter) => {
-            const newAttributes = [...pageInject.getAttributes()]
-              .reduce((acc, pair) => ({ ...acc, [pair.shift()]: pair.pop() }), {});
-
-            newAttributes[attrName] = attrValue;
             modelWriter.setAttribute(attrName, attrValue, pageInject);
-
             const newPageInject = getPageInject(editor, modelWriter, newAttributes);
 
             [...pageInject.getChildren()].forEach((childItem) => modelWriter.remove(childItem));
             [...newPageInject.getChildren()].forEach((childItem) => modelWriter.append(childItem, pageInject));
           });
+
+          if (newAttributes.type !== 'page' && newAttributes.template) {
+            change('template', '', change);
+          }
         },
       });
     },
