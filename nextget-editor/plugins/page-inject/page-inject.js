@@ -2,34 +2,34 @@
 
 let availableTemplates = {};
 
-const Command = window.ckeditor5.classes.core.command.class;
-const { findOptimalInsertionPosition } = window.ckeditor5.classes.widget.utils;
-const { showPagePicker, showSettingsPopup } = window.ckeditor5.exports;
+const Command = window.nextgenEditor.classes.core.command.class;
+const { findOptimalInsertionPosition } = window.nextgenEditor.classes.widget.utils;
+const { showPagePicker, showSettingsPopup } = window.nextgenEditor.exports;
 
 const itemTypes = {
   page: 'Page Injection',
   content: 'Content Injection',
 };
 
-window.ckeditor5.addHook('hookInit', () => {
-  window.ckeditor5.addButtonGroup('page-inject', {
+window.nextgenEditor.addHook('hookInit', () => {
+  window.nextgenEditor.addButtonGroup('page-inject', {
     label: 'Page Inject',
   });
 
-  window.ckeditor5.addButton('page-inject-page', {
+  window.nextgenEditor.addButton('page-inject-page', {
     group: 'page-inject',
     command: { name: 'page-inject', params: { type: 'page' } },
     label: 'Page Injection',
   });
 
-  window.ckeditor5.addButton('page-inject-content', {
+  window.nextgenEditor.addButton('page-inject-content', {
     group: 'page-inject',
     command: { name: 'page-inject', params: { type: 'content' } },
     label: 'Content Injection',
   });
 });
 
-window.ckeditor5.addHook('hookMarkdowntoHTML', {
+window.nextgenEditor.addHook('hookMarkdowntoHTML', {
   weight: -50,
   async handler(options, input) {
     let output = input;
@@ -70,7 +70,7 @@ window.ckeditor5.addHook('hookMarkdowntoHTML', {
   },
 });
 
-window.ckeditor5.addHook('hookMarkdowntoHTML', {
+window.nextgenEditor.addHook('hookMarkdowntoHTML', {
   weight: 50,
   handler(options, input) {
     let output = input;
@@ -84,7 +84,7 @@ window.ckeditor5.addHook('hookMarkdowntoHTML', {
   },
 });
 
-window.ckeditor5.addHook('hookHTMLtoMarkdown', {
+window.nextgenEditor.addHook('hookHTMLtoMarkdown', {
   weight: -50,
   handler(options, editor, input) {
     let output = input;
@@ -140,7 +140,7 @@ class GravPageInjectCommand extends Command {
   }
 }
 
-window.ckeditor5.addPlugin('GravPageInject', {
+window.nextgenEditor.addPlugin('GravPageInject', {
   init() {
     this.editor.commands.add('page-inject', new GravPageInjectCommand(this.editor));
 
