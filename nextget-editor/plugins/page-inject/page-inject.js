@@ -261,6 +261,7 @@ function getPageInject(editor, modelWriter, attributes) {
 
       showSettingsPopup({
         editor,
+        title: 'Page Inject',
         modelItem: pageInject,
         domDisplayPoint: event.target,
         attributes: {
