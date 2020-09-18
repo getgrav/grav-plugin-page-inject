@@ -129,11 +129,13 @@ class GravPageInjectCommand extends Command {
       const { parent } = this.editor.model.document.selection.focus;
 
       this.editor.model.change((modelWriter) => {
+        let insertPosition = findOptimalInsertionPosition(this.editor.model.document.selection, this.editor.model);
+
         if (parent && parent.name === 'paragraph' && parent.childCount === 0) {
+          insertPosition = modelWriter.createPositionBefore(parent);
           modelWriter.remove(parent);
         }
-
-        const insertPosition = findOptimalInsertionPosition(this.editor.model.document.selection, this.editor.model);
+        
         modelWriter.insert(modelPageInject, insertPosition);
       });
     });
@@ -260,9 +262,7 @@ function getPageInject(editor, modelWriter, attributes) {
         .reduce((acc, pair) => ({ ...acc, [pair.shift()]: pair.pop() }), {});
 
       showSettingsPopup({
-        editor,
         title: 'Page Inject',
-        modelItem: pageInject,
         domDisplayPoint: event.target,
         attributes: {
           type: {
@@ -306,11 +306,95 @@ function getPageInject(editor, modelWriter, attributes) {
             change('template', '', change);
           }
         },
+        deleteItem() {
+          editor.model.change((modelWriter) => {
+            modelWriter.remove(pageInject);
+          });
+        },
       });
     },
   });
 
   modelWriter.append(settings, container);
+
+  const modelSelect = modelWriter.createElement('div', { class: 'sc-select', title: 'Select shortcode' });
+  modelWriter.append(modelSelect, pageInject);
+
+  const modelSelectSvg = modelWriter.createElement('svg', {
+    viewBox: '0 0 16 16',
+    fill: 'currentColor',
+    stroke: 'none',
+    events: {
+      click() {
+        /*
+        editor.model.change((modelWriter2) => {
+          modelWriter2.setSelection(pageInject, 'on');
+        });
+        */
+      },
+    },
+  });
+
+  modelWriter.append(modelSelectSvg, modelSelect);
+
+  const modelSelectSvgPath1 = modelWriter.createElement('path', {
+    d: 'M4 0v1H1v3H0V.5A.5.5 0 0 1 .5 0H4zm8 0h3.5a.5.5 0 0 1 .5.5V4h-1V1h-3V0zM4 16H.5a.5.5 0 0 1-.5-.5V12h1v3h3v1zm8 0v-1h3v-3h1v3.5a.5.5 0 0 1-.5.5H12z',
+  });
+
+  modelWriter.append(modelSelectSvgPath1, modelSelectSvg);
+
+  const modelSelectSvgPath2 = modelWriter.createElement('path', {
+    d: 'M1 1h14v14H1z',
+  });
+
+  modelWriter.append(modelSelectSvgPath2, modelSelectSvg);
+
+  ['before', 'after'].forEach((where) => {
+    const modelInsert = modelWriter.createElement('div', { class: `sc-insert sc-insert-${where}`, title: `Insert paragraph ${where} shortcode` });
+    modelWriter.append(modelInsert, pageInject);
+
+    const modelInsertSvg = modelWriter.createElement('svg', {
+      viewBox: '0 0 10 8',
+      fill: 'currentColor',
+      stroke: 'none',
+      events: {
+        click() {
+          editor.execute('insertParagraph', {
+            position: editor.model.createPositionAt(pageInject, where),
+          });
+        },
+      },
+    });
+
+    modelWriter.append(modelInsertSvg, modelInsert);
+
+    const modelInsertSvgPolyline = modelWriter.createElement('polyline', {
+      points: '8.05541992 0.263427734 8.05541992 4.23461914 1.28417969 4.23461914',
+      transform: 'translate(1,0)',
+    });
+
+    modelWriter.append(modelInsertSvgPolyline, modelInsertSvg);
+
+    const modelInsertSvgLine1 = modelWriter.createElement('line', {
+      x1: '0',
+      y1: '4.21581031',
+      x2: '2',
+      y2: '2.17810059',
+      transform: 'translate(1, 0)',
+    });
+
+    modelWriter.append(modelInsertSvgLine1, modelInsertSvg);
+
+    const modelInsertSvgLine2 = modelWriter.createElement('line', {
+      x1: '0',
+      y1: '6.21581031',
+      x2: '2',
+      y2: '4.17810059',
+      transform: 'translate(2, 5.196955) scale(1, -1) translate(-1, -5.196955)',
+    });
+
+    modelWriter.append(modelInsertSvgLine2, modelInsertSvg);
+  });
 
   return pageInject;
 }

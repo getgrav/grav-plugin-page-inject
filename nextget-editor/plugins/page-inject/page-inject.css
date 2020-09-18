@@ -2,6 +2,13 @@ page-inject {
   border: 1px solid #ccc;
   display: block;
   margin: 16px 0;
+  outline: 3px solid transparent;
+  position: relative;
+  transition: outline-color .2s ease;
+}
+
+page-inject:hover {
+  outline-color: #ffc83d;
 }
 
 page-inject .pi-wrapper {
@@ -56,4 +63,96 @@ page-inject .pi-settings {
   height: 24px;
   margin-left: auto;
   width: 24px;
+}
+
+page-inject > .sc-select {
+  display: none;
+  background: #ffc83d;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0;
+  left: -4px;
+  line-height: 0;
+  opacity: 0;
+  padding: 4px;
+  position: absolute;
+  top: -25px;
+  transition: opacity .2s ease;
+  visibility: hidden;
+}
+
+page-inject:hover > .sc-select {
+  opacity: 1;
+  visibility: visible;
+  z-index: 1000;
+}
+
+page-inject > .sc-select > svg {
+  height: 16px;
+  width: 16px;
+}
+
+page-inject > .sc-select > svg > path:nth-child(2) {
+  opacity: .25;
+  transition: opacity .2s ease;
+}
+
+page-inject .sc-select:hover > svg > path:nth-child(2) {
+  opacity: .5;
+}
+
+page-inject > .sc-insert {
+  background: #ffc83d;
+  border-radius: 100px;
+  cursor: pointer;
+  height: 20px;
+  left: 40px;
+  opacity: 0;
+  position: absolute;
+  transition: opacity .2s ease, background .2s ease;
+  visibility: hidden;
+  width: 20px;
+  top: -13px;
+}
+
+page-inject > .sc-insert-after {
+  bottom: -11px;
+  left: auto;
+  right: 40px;
+  top: auto;
+}
+
+page-inject:hover > .sc-insert {
+  opacity: 1;
+  visibility: visible;
+  z-index: 1000;
+}
+
+page-inject > .sc-insert:hover {
+  background: #1f89e5;
+}
+
+page-inject > .sc-insert > svg {
+  height: 8px;
+  left: 50%;
+  margin-top: 1px;
+  position: absolute;
+  transform: translate(-50%,-50%);
+  transition: transform .5s ease;
+  width: 10px;
+  top: 50%;
+}
+
+page-inject > .sc-insert > svg > * {
+  fill: none;
+  stroke: #fff;
+  stroke-dasharray: 10;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5px;
+}
+
+page-inject > .sc-insert > svg > line {
+  stroke-dasharray: 7;
 }
