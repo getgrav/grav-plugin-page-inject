@@ -131,14 +131,9 @@ window.nextgenEditor.addHook('hookHTMLtoMarkdown', {
       const type = domPageInject.getAttribute('type');
       const route = domPageInject.getAttribute('route');
       const template = domPageInject.getAttribute('template');
-      const query = new URLSearchParams();
 
-      if (template) {
-        query.set('template', template);
-      }
-
-      const queryString = query.toString()
-        ? `?${query.toString()}`
+      const queryString = template
+        ? `?template=${template}`
         : '';
 
       return `<p>[plugin:${type}-inject](${route}${queryString})</p>`;
