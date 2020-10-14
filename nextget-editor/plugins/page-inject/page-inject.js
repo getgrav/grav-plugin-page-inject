@@ -39,12 +39,13 @@ function uncollapse(input) {
     .reduce((acc, attribute) => ({ ...acc, [attribute.name]: attribute.value }), {});
 
   /* eslint-disable indent, no-multi-spaces */
-  innerHTML += `<span class="pi-type">${itemTypes[attributes.type] || ''}</span>`;
-  innerHTML += `<span class="pi-title">${attributes.title || ''}</span>`;
-  innerHTML += `<a_reserved target="_blank" class="pi-route" href="${attributes.route || ''}">${attributes.route || ''}</a_reserved>`;
-  innerHTML += '<svg class="pi-route-settings" viewBox="0 0 24 24" fill="currentColor" stroke="none" onclick="pageInjectRouteSettings.call(this)">';
-  innerHTML +=   '<path d="M9 4.58V4c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v.58a8 8 0 0 1 1.92 1.11l.5-.29a2 2 0 0 1 2.74.73l1 1.74a2 2 0 0 1-.73 2.73l-.5.29a8.06 8.06 0 0 1 0 2.22l.5.3a2 2 0 0 1 .73 2.72l-1 1.74a2 2 0 0 1-2.73.73l-.5-.3A8 8 0 0 1 15 19.43V20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-.58a8 8 0 0 1-1.92-1.11l-.5.29a2 2 0 0 1-2.74-.73l-1-1.74a2 2 0 0 1 .73-2.73l.5-.29a8.06 8.06 0 0 1 0-2.22l-.5-.3a2 2 0 0 1-.73-2.72l1-1.74a2 2 0 0 1 2.73-.73l.5.3A8 8 0 0 1 9 4.57zM7.88 7.64l-.54.51-1.77-1.02-1 1.74 1.76 1.01-.17.73a6.02 6.02 0 0 0 0 2.78l.17.73-1.76 1.01 1 1.74 1.77-1.02.54.51a6 6 0 0 0 2.4 1.4l.72.2V20h2v-2.04l.71-.2a6 6 0 0 0 2.41-1.4l.54-.51 1.77 1.02 1-1.74-1.76-1.01.17-.73a6.02 6.02 0 0 0 0-2.78l-.17-.73 1.76-1.01-1-1.74-1.77 1.02-.54-.51a6 6 0 0 0-2.4-1.4l-.72-.2V4h-2v2.04l-.71.2a6 6 0 0 0-2.41 1.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path>';
-  innerHTML += '</svg>';
+  innerHTML += '<span class="pi-wrapper">';
+  innerHTML +=   `<span class="pi-type">${itemTypes[attributes.type] || ''}</span>`;
+  innerHTML +=   `<span class="pi-title">${attributes.title || ''}</span>`;
+  innerHTML +=   `<a_reserved target="_blank" class="pi-route" href="${attributes.route || ''}">${attributes.route || ''}</a_reserved>`;
+  innerHTML +=   '<svg class="pi-route-settings" viewBox="0 0 24 24" fill="currentColor" stroke="none" onclick="pageInjectRouteSettings.call(this)">';
+  innerHTML +=     '<path d="M9 4.58V4c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v.58a8 8 0 0 1 1.92 1.11l.5-.29a2 2 0 0 1 2.74.73l1 1.74a2 2 0 0 1-.73 2.73l-.5.29a8.06 8.06 0 0 1 0 2.22l.5.3a2 2 0 0 1 .73 2.72l-1 1.74a2 2 0 0 1-2.73.73l-.5-.3A8 8 0 0 1 15 19.43V20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-.58a8 8 0 0 1-1.92-1.11l-.5.29a2 2 0 0 1-2.74-.73l-1-1.74a2 2 0 0 1 .73-2.73l.5-.29a8.06 8.06 0 0 1 0-2.22l-.5-.3a2 2 0 0 1-.73-2.72l1-1.74a2 2 0 0 1 2.73-.73l.5.3A8 8 0 0 1 9 4.57zM7.88 7.64l-.54.51-1.77-1.02-1 1.74 1.76 1.01-.17.73a6.02 6.02 0 0 0 0 2.78l.17.73-1.76 1.01 1 1.74 1.77-1.02.54.51a6 6 0 0 0 2.4 1.4l.72.2V20h2v-2.04l.71-.2a6 6 0 0 0 2.41-1.4l.54-.51 1.77 1.02 1-1.74-1.76-1.01.17-.73a6.02 6.02 0 0 0 0-2.78l-.17-.73 1.76-1.01-1-1.74-1.77 1.02-.54-.51a6 6 0 0 0-2.4-1.4l-.72-.2V4h-2v2.04l-.71.2a6 6 0 0 0-2.41 1.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path>';
+  innerHTML +=   '</svg>';
 
   if (attributes.type === 'page') {
     const templateValue = attributes.template
@@ -56,9 +57,12 @@ function uncollapse(input) {
     innerHTML += `<span class="pi-template">${templateValue}</span>`;
   }
 
-  innerHTML += '<svg class="pi-settings" viewBox="0 0 24 24" fill="currentColor" stroke="none" onclick="pageInjectSettings.call(this)">';
-  innerHTML +=   '<path d="M9 4.58V4c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v.58a8 8 0 0 1 1.92 1.11l.5-.29a2 2 0 0 1 2.74.73l1 1.74a2 2 0 0 1-.73 2.73l-.5.29a8.06 8.06 0 0 1 0 2.22l.5.3a2 2 0 0 1 .73 2.72l-1 1.74a2 2 0 0 1-2.73.73l-.5-.3A8 8 0 0 1 15 19.43V20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-.58a8 8 0 0 1-1.92-1.11l-.5.29a2 2 0 0 1-2.74-.73l-1-1.74a2 2 0 0 1 .73-2.73l.5-.29a8.06 8.06 0 0 1 0-2.22l-.5-.3a2 2 0 0 1-.73-2.72l1-1.74a2 2 0 0 1 2.73-.73l.5.3A8 8 0 0 1 9 4.57zM7.88 7.64l-.54.51-1.77-1.02-1 1.74 1.76 1.01-.17.73a6.02 6.02 0 0 0 0 2.78l.17.73-1.76 1.01 1 1.74 1.77-1.02.54.51a6 6 0 0 0 2.4 1.4l.72.2V20h2v-2.04l.71-.2a6 6 0 0 0 2.41-1.4l.54-.51 1.77 1.02 1-1.74-1.76-1.01.17-.73a6.02 6.02 0 0 0 0-2.78l-.17-.73 1.76-1.01-1-1.74-1.77 1.02-.54-.51a6 6 0 0 0-2.4-1.4l-.72-.2V4h-2v2.04l-.71.2a6 6 0 0 0-2.41 1.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path>';
-  innerHTML += '</svg>';
+  innerHTML += '</span>';
+  innerHTML += '<span class="pi-settings">';
+  innerHTML +=   '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none" onclick="pageInjectSettings.call(this)">';
+  innerHTML +=     '<path d="M9 4.58V4c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v.58a8 8 0 0 1 1.92 1.11l.5-.29a2 2 0 0 1 2.74.73l1 1.74a2 2 0 0 1-.73 2.73l-.5.29a8.06 8.06 0 0 1 0 2.22l.5.3a2 2 0 0 1 .73 2.72l-1 1.74a2 2 0 0 1-2.73.73l-.5-.3A8 8 0 0 1 15 19.43V20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-.58a8 8 0 0 1-1.92-1.11l-.5.29a2 2 0 0 1-2.74-.73l-1-1.74a2 2 0 0 1 .73-2.73l.5-.29a8.06 8.06 0 0 1 0-2.22l-.5-.3a2 2 0 0 1-.73-2.72l1-1.74a2 2 0 0 1 2.73-.73l.5.3A8 8 0 0 1 9 4.57zM7.88 7.64l-.54.51-1.77-1.02-1 1.74 1.76 1.01-.17.73a6.02 6.02 0 0 0 0 2.78l.17.73-1.76 1.01 1 1.74 1.77-1.02.54.51a6 6 0 0 0 2.4 1.4l.72.2V20h2v-2.04l.71-.2a6 6 0 0 0 2.41-1.4l.54-.51 1.77 1.02 1-1.74-1.76-1.01.17-.73a6.02 6.02 0 0 0 0-2.78l-.17-.73 1.76-1.01-1-1.74-1.77 1.02-.54-.51a6 6 0 0 0-2.4-1.4l-.72-.2V4h-2v2.04l-.71.2a6 6 0 0 0-2.41 1.4zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path>';
+  innerHTML +=   '</span>';
+  innerHTML += '</span>';
   /* eslint-enable indent, no-multi-spaces */
 
   domOutput.body.firstChild.innerHTML = innerHTML;
@@ -136,7 +140,7 @@ window.nextgenEditor.addHook('hookHTMLtoMarkdown', {
         ? `?template=${template}`
         : '';
 
-      return `<p>[plugin:${type}-inject](${route}${queryString})</p>`;
+      return `[plugin:${type}-inject](${route}${queryString})`;
     });
 
     return output;
@@ -174,10 +178,10 @@ window.nextgenEditor.addPlugin('GravPageInject', {
     this.editor.commands.add('page-inject', new GravPageInjectCommand(this.editor));
 
     this.editor.model.schema.register('page-inject', {
-      isBlock: true,
       isObject: true,
-      allowWhere: '$block',
-      allowContentOf: '$root',
+      isInline: true,
+      allowWhere: '$text',
+      allowContentOf: '$block',
       allowAttributes: [
         'type',
         'title',
@@ -228,7 +232,7 @@ window.pageInjectRouteSettings = function pageInjectRouteSettings() {
 
       const dataNewPageInject = uncollapse(`<page-inject type="${attributes.type}" title="${page.name}" route="${page.value}" template="${attributes.template}"></page-inject>`);
       const viewNewPageInject = editor.data.processor.toView(dataNewPageInject).getChild(0);
-      const modelNewPageInject = editor.data.toModel(viewNewPageInject).getChild(0);
+      const modelNewPageInject = editor.data.toModel(viewNewPageInject, '$block').getChild(0);
       const insertPosition = modelWriter.createPositionBefore(modelPageInject);
 
       modelWriter.remove(modelPageInject);
@@ -285,7 +289,7 @@ window.pageInjectSettings = function pageInjectSettings() {
     editor.model.change((modelWriter) => {
       const dataNewPageInject = uncollapse(`<page-inject type="${currentAttributes.type}" title="${currentAttributes.title}" route="${currentAttributes.route}" template="${currentAttributes.template}"></page-inject>`);
       const viewNewPageInject = editor.data.processor.toView(dataNewPageInject).getChild(0);
-      const modelNewPageInject = editor.data.toModel(viewNewPageInject).getChild(0);
+      const modelNewPageInject = editor.data.toModel(viewNewPageInject, '$block').getChild(0);
       const insertPosition = modelWriter.createPositionBefore(modelPageInject);
 
       modelWriter.remove(modelPageInject);

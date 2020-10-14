@@ -1,29 +1,28 @@
 page-inject {
   border: 1px solid #ccc;
-  display: block;
-  margin: 16px 0;
+  display: inline-flex;
 }
 
-page-inject > p {
+page-inject .pi-wrapper {
   align-items: center;
-  display: flex;
-  margin: 8px 16px!important;
+  display: inline-flex;
+  margin: 8px 16px;
 }
 
-page-inject > p > * {
+page-inject .pi-wrapper > * {
   margin-left: 16px;
 }
 
-page-inject > p > :first-child {
+page-inject .pi-wrapper > :first-child {
   margin-left: 0;
 }
 
-page-inject > p > *:before {
+page-inject .pi-wrapper > *:before {
   margin-right: 16px;
   content: '|';
 }
 
-page-inject > p > *:first-child:before {
+page-inject .pi-wrapper > *:first-child:before {
   display: none;
 }
 
@@ -54,25 +53,29 @@ page-inject.ck-widget_selected .pi-route-settings:hover {
 }
 
 page-inject .pi-settings {
-  color: #ffc83d;
+  align-items: center;
+  border-left: 1px solid #ccc;
+  display: inline-flex;
+  padding: 0 8px;
+}
+
+page-inject .pi-settings svg {
   cursor: pointer;
   height: 24px;
   margin-left: auto;
-  opacity: 0;
   transition: opacity .2s ease, color .2s ease;
   width: 24px;
 }
 
-page-inject:hover .pi-settings,
-page-inject.ck-widget_selected .pi-settings {
-  opacity: 1;
+page-inject:hover .pi-settings svg {
+  color: #ffc83d;
 }
 
-page-inject .pi-settings:hover,
-page-inject.ck-widget_selected .pi-settings {
+page-inject .pi-settings svg:hover,
+page-inject.ck-widget_selected .pi-settings svg {
   color: #1f89e5;
 }
 
-page-inject.ck-widget_selected .pi-settings:hover {
+page-inject.ck-widget_selected .pi-settings svg:hover {
   opacity: .5;
 }
