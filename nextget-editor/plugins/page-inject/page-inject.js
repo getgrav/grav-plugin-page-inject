@@ -80,6 +80,7 @@ window.nextgenEditor.addHook('hookMarkdowntoHTML', {
     const body = new FormData();
     const reqUrl = `${window.GravAdmin.config.base_url_relative}/task:pageInjectData`;
 
+    body.append('admin-nonce', window.GravAdmin.config.admin_nonce);
     items.forEach((matches) => {
       body.append('routes[]', matches.groups.route);
     });
@@ -91,7 +92,7 @@ window.nextgenEditor.addHook('hookMarkdowntoHTML', {
     const resp = await fetch(reqUrl, { body, method: 'POST' })
       .then((resp) => (resp.ok ? resp.json() : null))
       .then((resp) => (resp && resp.status !== 'error' ? resp : {}));
-    
+
     availableTemplates = resp.available_templates;
 
     const pages = resp.data
