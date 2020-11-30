@@ -198,8 +198,8 @@ class PageInjectPlugin extends Plugin
         $plugins = $event['plugins'];
 
         // page-inject
-        $plugins['css'][] = 'plugin://page-inject/nextget-editor/plugins/page-inject/page-inject.css';
-        $plugins['js'][] = 'plugin://page-inject/nextget-editor/plugins/page-inject/page-inject.js';
+        $plugins['css'][] = 'plugin://page-inject/nextgen-editor/plugins/page-inject/page-inject.css';
+        $plugins['js'][] = 'plugin://page-inject/nextgen-editor/plugins/page-inject/page-inject.js';
 
         $event['plugins']  = $plugins;
         return $event;
