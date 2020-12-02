@@ -1,5 +1,7 @@
 name: Page Inject
-version: 1.3.1
+type: plugin
+slug: page-inject
+version: 1.4.0
 description: "**Page Inject** is a powerful plugin that lets you inject entire pages or page content into other pages using simple markdown syntax"
 icon: trello
 author:
@@ -10,6 +12,8 @@ homepage: https://github.com/getgrav/grav-plugin-page-inject
 keywords: inject, embed, markdown
 bugs: https://github.com/getgrav/grav-plugin-page-inject/issues
 license: MIT
+dependencies:
+  - { name: grav, version: '>=1.6.0' }
 
 form:
   validation: strict

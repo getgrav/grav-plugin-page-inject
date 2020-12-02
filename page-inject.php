@@ -11,9 +11,16 @@ namespace Grav\Plugin;
 
 use Grav\Common\Config\Config;
 use Grav\Common\Grav;
+use Grav\Common\Helpers\Excerpts;
+use Grav\Common\Page\Interfaces\PageInterface;
+use Grav\Common\Page\Pages;
 use Grav\Common\Plugin;
 use Grav\Common\Page\Page;
 use Grav\Common\Uri;
+use Grav\Framework\Psr7\Response;
+use Grav\Framework\RequestHandler\Exception\RequestException;
+use Grav\Plugin\Admin\Admin;
+use Psr\Http\Message\ResponseInterface;
 use RocketTheme\Toolbox\Event\Event;
 
 class PageInjectPlugin extends Plugin
@@ -28,6 +35,7 @@ class PageInjectPlugin extends Plugin
     {
         return [
             'onPluginsInitialized' => ['onPluginsInitialized', 0],
+            'registerNextGenEditorPlugin' => ['registerNextGenEditorPlugin', 0],
         ];
     }
 
@@ -37,13 +45,86 @@ class PageInjectPlugin extends Plugin
     public function onPluginsInitialized()
     {
         if ($this->isAdmin()) {
-            $this->active = false;
+            $this->enable([
+                'onAdminTaskExecute' => ['onAdminTaskExecute', 0],
+            ]);
             return;
         }
 
         $this->enable([
             'onPageContentRaw' => ['onPageContentRaw', 0],
         ]);
+    }
+
+    /**
+     *
+     * @param Event $e
+     */
+    public function onAdminTaskExecute(Event $e): void
+    {
+        if ($e['method'] === 'taskPageInjectData') {
+            header('Content-type: application/json');
+            header('Cache-Control: no-cache, no-store, must-revalidate');
+            $controller = $e['controller'];
+
+            if (!$controller->authorizeTask('pageInject', ['admin.pages', 'admin.super'])) {
+                http_response_code(401);
+                $json_response = [
+                    'status'  => 'error',
+                    'message' => '<i class="fa fa-warning"></i> Unable to get PageInject data',
+                    'details' => 'Insufficient permissions for this user.'
+                ];
+                echo json_encode($json_response);
+                exit;
+            }
+
+            error_reporting(1);
+            set_time_limit(0);
+
+            $json_response = $this->getPageInjectData();
+
+            echo json_encode($json_response);
+            exit;
+        }
+    }
+
+    protected function getPageInjectData()
+    {
+        $request = $this->grav['request'];
+        $data = $request->getParsedBody();
+        $page_routes = $data['routes'] ?? [];
+
+        /** @var Pages $pages */
+        $pages = Admin::enablePages();
+
+        foreach($page_routes as $route) {
+            /** @var PageInterface */
+            $page = $pages->find($route);
+
+            if (!$page) {
+                $data = [
+                    'status' => 'Error',
+                    'message' => 'Page not found',
+                    'data' => []
+                ];
+            } else {
+                $data = [
+                    'status'  => 'success',
+                    'message' => 'Page found',
+                    'data' => [
+                        'title' => $page->title(),
+                        'route' => $page->route(),
+                        'modified' => $page->modified(),
+                        'template' => $page->template(),
+                    ]
+                ];
+            }
+
+            $json['data'][] = $data;
+            $json['available_templates'] = $pages->pageTypes();
+        }
+
+        return $json;
     }
 
     /**
@@ -111,5 +192,16 @@ class PageInjectPlugin extends Plugin
     {
         $regex = '/\[plugin:(content-inject|page-inject)\]\(((.*)\?template=(.*)|(.*))\)/i';
         return preg_replace_callback($regex, $function, $content);
+    }
+
+    public function registerNextGenEditorPlugin($event) {
+        $plugins = $event['plugins'];
+
+        // page-inject
+        $plugins['css'][] = 'plugin://page-inject/nextgen-editor/plugins/page-inject/page-inject.css';
+        $plugins['js'][] = 'plugin://page-inject/nextgen-editor/plugins/page-inject/page-inject.js';
+
+        $event['plugins']  = $plugins;
+        return $event;
     }
 }

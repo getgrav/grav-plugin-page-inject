@@ -34,7 +34,7 @@ If you need to change any value, then the best process is to copy the [page-inje
 
 The `active` option allows you to enable/disable the plugin site-wide, and then enable it on page via Page Config overrides. This is useful to optimize performance.
 
-the `processed_content` option means the page is pre-rendered before being injected.  This is the default behavior and means that relative image links and other path-sensitive content works correctly.  You can however set this to `false` and then the raw markdown is inject and processed along with the rest of the current page. This is releavant for `content-inject` links **only**.
+the `processed_content` option means the page is pre-rendered before being injected.  This is the default behavior and means that relative image links and other path-sensitive content works correctly.  You can however set this to `false` and then the raw markdown is inject and processed along with the rest of the current page. This is relevant for `content-inject` links **only**.
 
 ### Page Config
 
@@ -56,7 +56,7 @@ There are two ways to use this plugin in your markdown content:
     [plugin:page-inject](/route/to/page)
     ```
 
-    This approach includes an entire page rendered with the associated template.  This works best for modular page content or content that uses a specific template that provides appropriate styling that is intended to be part of other pages.  you can also pass an optional template name and use that template to render teh page (as long as you also provide the template in your theme):
+    This approach includes an entire page rendered with the associated template.  This works best for modular page content or content that uses a specific template that provides appropriate styling that is intended to be part of other pages.  You can also pass an optional template name and use that template to render the page (as long as you also provide the template in your theme):
 
     ```
     [plugin:page-inject](/route/to/page?template=custom-template)
@@ -68,6 +68,6 @@ There are two ways to use this plugin in your markdown content:
     [plugin:content-inject](/route/to/page)
     ```
 
-    Sometimes you just want the content of another page injected directly into your current page.  Use `content-inject` for this purpose.  The content is not rendered with the assoicated twig template, merely injected into the current page.
+    Sometimes you just want the content of another page injected directly into your current page.  Use `content-inject` for this purpose.  The content is not rendered with the associated twig template, merely injected into the current page.
 
 [grav]: http://github.com/getgrav/grav

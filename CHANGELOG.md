@@ -1,3 +1,12 @@
+# v1.4.0
+## 12/02/2020
+
+1. [](#new)
+    * NEW support for NextGen Editor
+    * Added a new `taskPageInjectData` to be used by NextGen Editor integration
+1. [](#bugfix)
+    * Added missing admin nonce
+
 # v1.3.1
 ## 04/15/2019
 
