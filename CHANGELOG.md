@@ -1,9 +1,12 @@
 # v1.4.0
-## mm/dd/2020
+## 12/02/2020
 
 1. [](#new)
-    * Added a new `taskPageInjectData` to be used by CKEditor5 integration
-    
+    * NEW support for NextGen Editor
+    * Added a new `taskPageInjectData` to be used by NextGen Editor integration
+1. [](#bugfix)
+    * Added missing admin nonce
+
 # v1.3.1
 ## 04/15/2019
 
