@@ -1,3 +1,9 @@
+# v1.4.1
+## 12/18/2020
+
+1. [](#improved)
+    * NextGen Editor: Properly restore the initial stored path when loading the Page Picker
+
 # v1.4.0
 ## 12/02/2020
 
