@@ -150,7 +150,7 @@ window.nextgenEditor.addHook('hookHTMLtoMarkdown', {
 
 class GravPageInjectCommand extends Command {
   execute(params) {
-    showPagePicker((page) => {
+    showPagePicker(params.value, (page) => {
       const dataPageInject = uncollapse(`<page-inject type="${params.type}" title="${page.name}" route="${page.value}" template=""></page-inject>`);
       const viewPageInject = this.editor.data.processor.toView(dataPageInject).getChild(0);
       const modelPageInject = this.editor.data.toModel(viewPageInject).getChild(0);
@@ -221,9 +221,10 @@ window.pageInjectRouteSettings = function pageInjectRouteSettings() {
   const domPageInject = this.closest('page-inject');
   const viewPageInject = editor.editing.view.domConverter.mapDomToView(domPageInject);
   const modelPageInject = editor.editing.mapper.toModelElement(viewPageInject);
+  const route = modelPageInject.getAttribute('route');
 
-  showPagePicker((page) => {
-    if (page.value === modelPageInject.getAttribute('route')) {
+  showPagePicker(route, (page) => {
+    if (page.value === route) {
       return;
     }
 
