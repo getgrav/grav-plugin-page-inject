@@ -1,3 +1,9 @@
+# v1.4.2
+## 12/20/2020
+
+1. [](#bugfix)
+    * Fixed `undefined` value when inserting a new Page-Inject shortcode, preventing Page picker to load
+
 # v1.4.1
 ## 12/18/2020
 
