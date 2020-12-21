@@ -19,13 +19,13 @@ window.nextgenEditor.addHook('hookInit', () => {
 
   window.nextgenEditor.addButton('page-inject-page', {
     group: 'page-inject',
-    command: { name: 'page-inject', params: { type: 'page' } },
+    command: { name: 'page-inject', params: { type: 'page', value: '' } },
     label: 'Page Injection',
   });
 
   window.nextgenEditor.addButton('page-inject-content', {
     group: 'page-inject',
-    command: { name: 'page-inject', params: { type: 'content' } },
+    command: { name: 'page-inject', params: { type: 'content', value: '' } },
     label: 'Content Injection',
   });
 });
