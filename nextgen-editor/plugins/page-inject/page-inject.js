@@ -193,23 +193,23 @@ window.nextgenEditor.addPlugin('GravPageInject', {
 
     this.editor.conversion.for('upcast').elementToElement({
       view: 'page-inject',
-      model(viewElement, modelWriter) {
-        return modelWriter.createElement('page-inject', viewElement.getAttributes());
+      model(viewElement, { writer }) {
+        return writer.createElement('page-inject', viewElement.getAttributes());
       },
     });
 
     this.editor.conversion.for('dataDowncast').elementToElement({
       model: 'page-inject',
-      view(modelElement, viewWriter) {
-        return viewWriter.createContainerElement('page-inject', modelElement.getAttributes());
+      view(modelElement, { writer }) {
+        return writer.createContainerElement('page-inject', modelElement.getAttributes());
       },
     });
 
     this.editor.conversion.for('editingDowncast').elementToElement({
       model: 'page-inject',
-      view(modelElement, viewWriter) {
-        const container = viewWriter.createContainerElement('page-inject', modelElement.getAttributes());
-        return toWidget(container, viewWriter);
+      view(modelElement, { writer }) {
+        const container = writer.createContainerElement('page-inject', modelElement.getAttributes());
+        return toWidget(container, writer);
       },
     });
   },
