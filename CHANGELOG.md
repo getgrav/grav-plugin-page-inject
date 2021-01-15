@@ -1,5 +1,5 @@
 # v1.4.3
-## mm/dd/2020
+## 01/15/2021
 
 1. [](#improved)
    * NextGen Editor: Updated upcast/downcast syntax to support latest version
