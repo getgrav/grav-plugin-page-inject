@@ -1,3 +1,9 @@
+# v1.4.4
+## mm/dd/2021
+
+1. [](#bugfix)
+   * NextGen Editor: Fixed Page Inject UI links missing the base_root [getgrav/grav-premium-issues#30](https://github.com/getgrav/grav-premium-issues/issues/30)
+
 # v1.4.3
 ## 01/15/2021
 
