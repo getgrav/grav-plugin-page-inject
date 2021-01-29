@@ -1,3 +1,10 @@
+# v1.4.4
+## 01/29/2021
+
+1. [](#bugfix)
+   * NextGen Editor: Fixed Page Inject UI links missing the base_root [getgrav/grav-premium-issues#30](https://github.com/getgrav/grav-premium-issues/issues/30)
+   * NextGen Editor: Moved list of available templates to input text to support partials and any twig template [getgrav/grav-premium-issues#24](https://github.com/getgrav/grav-premium-issues/issues/24)
+   
 # v1.4.3
 ## 01/15/2021
 
