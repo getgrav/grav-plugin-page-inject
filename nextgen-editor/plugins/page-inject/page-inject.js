@@ -265,11 +265,12 @@ window.pageInjectSettings = function pageInjectSettings() {
     template: {
       title: 'Template',
       widget: {
-        type: 'select',
-        values: [
-          { value: '', label: '' },
-          ...Object.keys(availableTemplates).map((value) => ({ value, label: availableTemplates[value] })),
-        ],
+        type: 'input-text',
+        // type: 'select',
+        // values: [
+        //   { value: '', label: '' },
+        //   ...Object.keys(availableTemplates).map((value) => ({ value, label: availableTemplates[value] })),
+        // ],
         visible: ({ attributes }) => attributes.type === 'page',
       },
     },
