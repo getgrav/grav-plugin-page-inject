@@ -67,7 +67,7 @@ class PageInjectPlugin extends Plugin
             header('Cache-Control: no-cache, no-store, must-revalidate');
             $controller = $e['controller'];
 
-            if (!$controller->authorizeTask('pageInject', ['admin.pages', 'admin.super'])) {
+            if (!$controller->authorizeTask('pageInject', ['admin.pages.read', 'admin.super'])) {
                 http_response_code(401);
                 $json_response = [
                     'status'  => 'error',

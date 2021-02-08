@@ -1,3 +1,9 @@
+# v1.4.5
+## mm/dd/2021
+
+1. [](#bugfix)
+  * Fixed permissions to only require `pages.read` for `taskPageInject` [premium-issues#43](https://github.com/getgrav/grav-premium-issues/issues/43)
+
 # v1.4.4
 ## 01/29/2021
 
@@ -10,7 +16,7 @@
 
 1. [](#improved)
    * NextGen Editor: Updated upcast/downcast syntax to support latest version
-
+  
 # v1.4.2
 ## 12/20/2020
 
