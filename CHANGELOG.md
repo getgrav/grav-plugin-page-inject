@@ -1,5 +1,5 @@
 # v1.4.5
-## mm/dd/2021
+## 04/27/2021
 
 1. [](#improved)
    * NextGen Editor: Added toolbar icon
