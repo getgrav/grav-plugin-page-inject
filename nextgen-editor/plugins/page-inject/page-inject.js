@@ -15,6 +15,7 @@ const itemTypes = {
 window.nextgenEditor.addHook('hookInit', () => {
   window.nextgenEditor.addButtonGroup('page-inject', {
     label: 'Page Inject',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" /></svg>`
   });
 
   window.nextgenEditor.addButton('page-inject-page', {
@@ -216,99 +217,107 @@ window.nextgenEditor.addPlugin('GravPageInject', {
 });
 
 window.pageInjectRouteSettings = function pageInjectRouteSettings() {
-  const { editor } = window.nextgenEditor;
+  const { editors } = window.nextgenEditor;
 
   const domPageInject = this.closest('page-inject');
-  const viewPageInject = editor.editing.view.domConverter.mapDomToView(domPageInject);
-  const modelPageInject = editor.editing.mapper.toModelElement(viewPageInject);
-  const route = modelPageInject.getAttribute('route');
+  const editor = (editors.filter((instance) => instance.ui.view.element.contains(domPageInject)) || []).shift();
 
-  showPagePicker(route, (page) => {
-    if (page.value === route) {
-      return;
-    }
+  if (editor) {
+    const viewPageInject = editor.editing.view.domConverter.mapDomToView(domPageInject);
+    const modelPageInject = editor.editing.mapper.toModelElement(viewPageInject);
+    const route = modelPageInject.getAttribute('route');
 
-    editor.model.change((modelWriter) => {
-      const attributes = [...modelPageInject.getAttributes()]
-        .reduce((acc, pair) => ({ ...acc, [pair.shift()]: pair.pop() }), {});
+    showPagePicker(route, (page) => {
+      if (page.value === route) {
+        return;
+      }
 
-      const dataNewPageInject = uncollapse(`<page-inject type="${attributes.type}" title="${page.name}" route="${page.value}" template="${attributes.template}"></page-inject>`);
-      const viewNewPageInject = editor.data.processor.toView(dataNewPageInject).getChild(0);
-      const modelNewPageInject = editor.data.toModel(viewNewPageInject, '$block').getChild(0);
-      const insertPosition = modelWriter.createPositionBefore(modelPageInject);
+      editor.model.change((modelWriter) => {
+        const attributes = [...modelPageInject.getAttributes()]
+          .reduce((acc, pair) => ({ ...acc, [pair.shift()]: pair.pop() }), {});
 
-      modelWriter.remove(modelPageInject);
-      modelWriter.insert(modelNewPageInject, insertPosition);
-      modelWriter.setSelection(modelNewPageInject, 'on');
+        const dataNewPageInject = uncollapse(`<page-inject type="${attributes.type}" title="${page.name}" route="${page.value}" template="${attributes.template}"></page-inject>`);
+        const viewNewPageInject = editor.data.processor.toView(dataNewPageInject).getChild(0);
+        const modelNewPageInject = editor.data.toModel(viewNewPageInject, '$block').getChild(0);
+        const insertPosition = modelWriter.createPositionBefore(modelPageInject);
+
+        modelWriter.remove(modelPageInject);
+        modelWriter.insert(modelNewPageInject, insertPosition);
+        modelWriter.setSelection(modelNewPageInject, 'on');
+      });
     });
-  });
+  }
 };
 
 window.pageInjectSettings = function pageInjectSettings() {
-  const { editor } = window.nextgenEditor;
+  const { editors } = window.nextgenEditor;
 
   const domPageInject = this.closest('page-inject');
-  const viewPageInject = editor.editing.view.domConverter.mapDomToView(domPageInject);
-  let modelPageInject = editor.editing.mapper.toModelElement(viewPageInject);
+  const editor = (editors.filter((instance) => instance.ui.view.element.contains(domPageInject)) || []).shift();
 
-  const currentAttributes = [...modelPageInject.getAttributes()]
-    .reduce((acc, pair) => ({ ...acc, [pair.shift()]: pair.pop() }), {});
+  if (editor) {
+    const viewPageInject = editor.editing.view.domConverter.mapDomToView(domPageInject);
+    let modelPageInject = editor.editing.mapper.toModelElement(viewPageInject);
 
-  const attributes = {
-    type: {
-      title: 'Type',
-      widget: {
-        type: 'select',
-        values: Object.keys(itemTypes).map((value) => ({ value, label: itemTypes[value] })),
+    const currentAttributes = [...modelPageInject.getAttributes()]
+        .reduce((acc, pair) => ({...acc, [pair.shift()]: pair.pop()}), {});
+
+    const attributes = {
+      type: {
+        title: 'Type',
+        widget: {
+          type: 'select',
+          values: Object.keys(itemTypes).map((value) => ({value, label: itemTypes[value]})),
+        },
       },
-    },
-    template: {
-      title: 'Template',
-      widget: {
-        type: 'input-text',
-        // type: 'select',
-        // values: [
-        //   { value: '', label: '' },
-        //   ...Object.keys(availableTemplates).map((value) => ({ value, label: availableTemplates[value] })),
-        // ],
-        visible: ({ attributes }) => attributes.type === 'page',
+      template: {
+        title: 'Template',
+        widget: {
+          type: 'input-text',
+          // type: 'select',
+          // values: [
+          //   { value: '', label: '' },
+          //   ...Object.keys(availableTemplates).map((value) => ({ value, label: availableTemplates[value] })),
+          // ],
+          visible: ({attributes}) => attributes.type === 'page',
+        },
       },
-    },
-  };
+    };
 
-  const argsForPopup = {
-    title: 'Page Inject',
-    domDisplayPoint: this,
-    debounceDelay: 1000,
-    attributes,
-    currentAttributes,
-  };
+    const argsForPopup = {
+      title: 'Page Inject',
+      domDisplayPoint: this,
+      debounceDelay: 1000,
+      attributes,
+      currentAttributes,
+    };
 
-  argsForPopup.deleteItem = () => {
-    editor.model.change((modelWriter) => modelWriter.remove(modelPageInject));
-  };
+    argsForPopup.deleteItem = () => {
+      editor.model.change((modelWriter) => modelWriter.remove(modelPageInject));
+    };
 
-  argsForPopup.changeAttributes = (changeCallback) => {
-    editor.model.change((modelWriter) => {
-      const dataNewPageInject = uncollapse(`<page-inject type="${currentAttributes.type}" title="${currentAttributes.title}" route="${currentAttributes.route}" template="${currentAttributes.template}"></page-inject>`);
-      const viewNewPageInject = editor.data.processor.toView(dataNewPageInject).getChild(0);
-      const modelNewPageInject = editor.data.toModel(viewNewPageInject, '$block').getChild(0);
-      const insertPosition = modelWriter.createPositionBefore(modelPageInject);
+    argsForPopup.changeAttributes = (changeCallback) => {
+      editor.model.change((modelWriter) => {
+        const dataNewPageInject = uncollapse(`<page-inject type="${currentAttributes.type}" title="${currentAttributes.title}" route="${currentAttributes.route}" template="${currentAttributes.template}"></page-inject>`);
+        const viewNewPageInject = editor.data.processor.toView(dataNewPageInject).getChild(0);
+        const modelNewPageInject = editor.data.toModel(viewNewPageInject, '$block').getChild(0);
+        const insertPosition = modelWriter.createPositionBefore(modelPageInject);
 
-      modelWriter.remove(modelPageInject);
-      modelWriter.insert(modelNewPageInject, insertPosition);
-      modelWriter.setSelection(modelNewPageInject, 'on');
+        modelWriter.remove(modelPageInject);
+        modelWriter.insert(modelNewPageInject, insertPosition);
+        modelWriter.setSelection(modelNewPageInject, 'on');
 
-      modelPageInject = modelNewPageInject;
-    });
+        modelPageInject = modelNewPageInject;
+      });
 
-    if (currentAttributes.type !== 'page' && currentAttributes.template) {
-      currentAttributes.template = '';
-      changeCallback();
-    }
-  };
+      if (currentAttributes.type !== 'page' && currentAttributes.template) {
+        currentAttributes.template = '';
+        changeCallback();
+      }
+    };
 
-  showSettingsPopup(argsForPopup);
+    showSettingsPopup(argsForPopup);
+  }
 };
 
 })();
