@@ -1,8 +1,11 @@
 # v1.4.5
 ## mm/dd/2021
 
+1. [](#improved)
+   * NextGen Editor: Added toolbar icon
+   * NextGen Editor: Added support for multiple editor instances
 1. [](#bugfix)
-  * Fixed permissions to only require `pages.read` for `taskPageInject` [premium-issues#43](https://github.com/getgrav/grav-premium-issues/issues/43)
+   * Fixed permissions to only require `pages.read` for `taskPageInject` [premium-issues#43](https://github.com/getgrav/grav-premium-issues/issues/43)
 
 # v1.4.4
 ## 01/29/2021
