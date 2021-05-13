@@ -11,6 +11,7 @@ namespace Grav\Plugin;
 
 use Composer\Autoload\ClassLoader;
 use Grav\Common\Config\Config;
+use Grav\Common\Data\Data;
 use Grav\Common\Page\Interfaces\PageInterface;
 use Grav\Common\Page\Pages;
 use Grav\Common\Plugin;
@@ -61,8 +62,27 @@ class PageInjectPlugin extends Plugin
         }
 
         $this->enable([
+            'onPageInitialized' => ['onPageInitialized', 0],
             'onPageContentRaw' => ['onPageContentRaw', 0],
         ]);
+    }
+
+    /**
+     * Register shortcodes and add merged config of plugin/page to Grav DI container
+     * 
+     * @param Event $event Contains current Page
+     */
+    public function onPageInitialized(Event $event): void
+    {
+        /** @var Page */
+        $page = $event['page'];
+        /** @var Data */
+        $config = $this->mergeConfig($page);
+
+        if ($config->get('enabled') && $config->get('active') && $config->get('parser') !== 'regex') {
+            $this->grav->offsetSet('piConfig', $config);
+            $this->grav['shortcode']->registerShortcode('InjectPageShortcode.php', 'classes/shortcodes');
+        }
     }
 
     /**
@@ -149,8 +169,7 @@ class PageInjectPlugin extends Plugin
         /** @var Config $config */
         $config = $this->mergeConfig($page);
         
-
-        if ($config->get('enabled') && $config->get('active')) {
+        if ($config->get('enabled') && $config->get('active') && $config->get('parser') !== 'shortcode') {
             // Get raw content and substitute all formulas by a unique token
             $raw = $page->getRawContent();
 

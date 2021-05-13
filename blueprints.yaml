@@ -41,6 +41,18 @@ form:
         type: bool
       help: This will ensure the plugin is activated site wide. You can override with page header options.
 
+    parser:
+      type: select
+      size: medium
+      classes: fancy
+      label: Processor
+      help: Which built-in processor to use. Regex, Shortcode,both 
+      default: regex
+      options:
+          regex: regex
+          shortcode: shortcode
+          both: both
+
     processed_content:
       type: toggle
       label: Processed Content

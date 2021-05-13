@@ -1,3 +1,4 @@
 enabled: true
 active: true
 processed_content: true
+parser: regex               # regex|shortcode|both. Default: regex
