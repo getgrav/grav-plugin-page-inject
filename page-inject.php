@@ -9,18 +9,14 @@
 
 namespace Grav\Plugin;
 
+use Composer\Autoload\ClassLoader;
 use Grav\Common\Config\Config;
-use Grav\Common\Grav;
-use Grav\Common\Helpers\Excerpts;
 use Grav\Common\Page\Interfaces\PageInterface;
 use Grav\Common\Page\Pages;
 use Grav\Common\Plugin;
 use Grav\Common\Page\Page;
 use Grav\Common\Uri;
-use Grav\Framework\Psr7\Response;
-use Grav\Framework\RequestHandler\Exception\RequestException;
 use Grav\Plugin\Admin\Admin;
-use Psr\Http\Message\ResponseInterface;
 use RocketTheme\Toolbox\Event\Event;
 
 class PageInjectPlugin extends Plugin
@@ -34,9 +30,22 @@ class PageInjectPlugin extends Plugin
     public static function getSubscribedEvents()
     {
         return [
-            'onPluginsInitialized' => ['onPluginsInitialized', 0],
+            'onPluginsInitialized' => [
+                ['autoload', 100000],
+                ['onPluginsInitialized', 0]
+            ],
             'registerNextGenEditorPlugin' => ['registerNextGenEditorPlugin', 0],
         ];
+    }
+
+    /**
+    * Composer autoload.
+    *is
+    * @return ClassLoader
+    */
+    public function autoload(): ClassLoader
+    {
+        return require __DIR__ . '/vendor/autoload.php';
     }
 
     /**
@@ -139,7 +148,7 @@ class PageInjectPlugin extends Plugin
 
         /** @var Config $config */
         $config = $this->mergeConfig($page);
-
+        
 
         if ($config->get('enabled') && $config->get('active')) {
             // Get raw content and substitute all formulas by a unique token
