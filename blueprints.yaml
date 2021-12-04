@@ -52,3 +52,11 @@ form:
       validate:
         type: bool
       help: If enabled the page is pre-rendered before being injected, so relative paths work correctly
+
+    remote_injections:
+      type: array
+      label: Remote Injections
+      help: Key should be a short slug, e.g. "dev", and the full URL should be "https://foo.com/path"
+      placeholder_key: Short slug
+      placeholder_value: Full Url
+

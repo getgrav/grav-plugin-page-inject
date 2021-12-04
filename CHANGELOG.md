@@ -1,3 +1,9 @@
+# v2.0.0
+## mm/dd/2021
+
+1. [](#new)
+   * Added support for new remote injects.
+
 # v1.4.5
 ## 04/27/2021
 

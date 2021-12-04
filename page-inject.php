@@ -20,6 +20,7 @@ use Grav\Common\Uri;
 use Grav\Framework\Psr7\Response;
 use Grav\Framework\RequestHandler\Exception\RequestException;
 use Grav\Plugin\Admin\Admin;
+use http\Client\Request;
 use Psr\Http\Message\ResponseInterface;
 use RocketTheme\Toolbox\Event\Event;
 
@@ -53,6 +54,7 @@ class PageInjectPlugin extends Plugin
 
         $this->enable([
             'onPageContentRaw' => ['onPageContentRaw', 0],
+            'onPagesInitialized' => ['onPagesInitialized', 0],
         ]);
     }
 
@@ -140,7 +142,6 @@ class PageInjectPlugin extends Plugin
         /** @var Config $config */
         $config = $this->mergeConfig($page);
 
-
         if ($config->get('enabled') && $config->get('active')) {
             // Get raw content and substitute all formulas by a unique token
             $raw = $page->getRawContent();
@@ -153,7 +154,18 @@ class PageInjectPlugin extends Plugin
                 $page_path = $matches[3] ?: $matches[2];
                 $template = $matches[4];
 
-                $page_path = Uri::convertUrl($page, $page_path, 'link', false, true);
+                preg_match('#remote://(.*?)/(.*)#', $page_path, $remote_matches);
+
+                if (isset($remote_matches[1]) && $remote_matches[2]) {
+                    $remote_injections = $this->grav['config']->get('plugins.page-inject.remote_injections', []);
+                    $remote_url = $remote_injections[$remote_matches[1]] ?? null;
+                    if ($remote_url) {
+                        $url = $remote_url . '/?action=contentInject&path=/' . urlencode($remote_matches[2]);
+                        $response = \Grav\Common\HTTP\Response::get($url);
+                        return $response;
+                    }
+                } else {
+                    $page_path = Uri::convertUrl($page, $page_path, 'link', false, true);
 
                 $inject = $page->find($page_path);
                 if ($inject) {
@@ -181,10 +193,28 @@ class PageInjectPlugin extends Plugin
 
                 // do the replacement
                 return str_replace($search, $replace, $search);
+                }
+
+
             };
 
             // set the parsed content back into as raw content
             $page->setRawContent($this->parseInjectLinks($raw, $function));
+        }
+    }
+
+    public function onPagesInitialized()
+    {
+        $uri = $this->grav['uri'];
+        $action = $uri->query('action');
+        $path = $uri->query('path');
+        if ($action === 'contentInject' && isset($path)) {
+            $pages = $this->grav['pages'];
+            $page = $pages->find($path);
+            if ($page instanceof PageInterface && $page->published()) {
+               echo $page->content();
+               exit;
+            }
         }
     }
 
