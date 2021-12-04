@@ -13,7 +13,7 @@ keywords: inject, embed, markdown
 bugs: https://github.com/getgrav/grav-plugin-page-inject/issues
 license: MIT
 dependencies:
-  - { name: grav, version: '>=1.7.11' }
+  - { name: grav, version: '>=1.7.25' }
 
 form:
   validation: strict
