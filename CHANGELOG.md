@@ -1,5 +1,5 @@
-# v2.0.1
-## mm/dd/2021
+# v2.1.0
+## 12/06/2021
 
 1. [](#new)
    * Added `[page-inject]` and `[content-inject]` shortcodes as an alternative syntax
