@@ -1,6 +1,6 @@
 # Grav Page Inject Plugin
 
-`Page Inject` is a powerful [Grav][grav] Plugin that lets you inject entire pages or page content into other pages using simple markdown syntax
+`Page Inject` is a powerful [Grav][grav] Plugin that lets you inject entire pages or page content into other pages using simple markdown-style syntax or alternatively a shortcode syntax (Shortcode Core plugin required).
 
 # Installation
 
@@ -47,7 +47,7 @@ page-inject:
     processed_content: true
 ```
 
-# Usage
+## Markdown-Style Usage (Legacy)
 
 There are two ways to use this plugin in your markdown content:
 
@@ -71,6 +71,36 @@ There are two ways to use this plugin in your markdown content:
 
     Sometimes you just want the content of another page injected directly into your current page.  Use `content-inject` for this purpose.  The content is not rendered with the associated twig template, merely injected into the current page.
 
+## Shortcode Usage (New)
+
+The shortcode syntax follows the markdown-style syntax, and supports both `page-inject` and `content-inject` approaches. 
+
+> NOTE: Shortcode functionality requires the `shortcode-core` plugin to be installed and enabled.
+
+For example the Page Injection example from above would look like:
+
+```markdown
+[page-inject=/route/to/page /]
+```
+
+and the content inject version:
+
+```markdown
+[content-inject=/route/to/page /]
+```
+
+Alternatively, you can supply the path explicitly:
+
+```markdown
+[content-inject path="/route/to/page" /]
+```
+
+And for page-injection, you can specify a custom Twig template to render with:
+
+```markdown
+[page-inject path="/route/to/page" template="foo" /]
+```
+
 ## Remote Injects
 
 It is now possible to retrieve remote content from another Grav instance as long as both of the sites are running the latest version of the `page-inject` plugin.  First in the **client** Grav instance you need to define a remote connection to another Grav **server** in the plugin configuration.  For example:
@@ -85,6 +115,12 @@ This will then allow you to inject page content from one Grav instance to anothe
 
 ```markdown
 [plugin:page-inject](remote://dev/home/modular/_callout)
+```
+
+and for the shortcode version:
+
+```markdown
+[page-inject path="remote://dev/home/modular/_callout" /]
 ```
 
 Where the `remote://dev` protocol tells the plugin to retrieve the requested page from the `dev` injection configuration via the path `/home/modular/_callout`.

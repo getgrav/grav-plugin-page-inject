@@ -1,3 +1,13 @@
+# v2.0.1
+## mm/dd/2021
+
+1. [](#new)
+   * Added `[page-inject]` and `[content-inject]` shortcodes as an alternative syntax
+   * Added support for remote `page-inject` and `content-inject` variations
+2. [](#improved)
+   * Refactored code to work with both markdown and shortcode syntax
+   * Use composer-based autoloader
+
 # v2.0.0
 ## 12/03/2021
 
