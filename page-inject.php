@@ -10,18 +10,14 @@
 namespace Grav\Plugin;
 
 use Grav\Common\Config\Config;
+use Grav\Common\Data\Data;
 use Grav\Common\Grav;
-use Grav\Common\Helpers\Excerpts;
 use Grav\Common\Page\Interfaces\PageInterface;
 use Grav\Common\Page\Pages;
 use Grav\Common\Plugin;
 use Grav\Common\Page\Page;
 use Grav\Common\Uri;
-use Grav\Framework\Psr7\Response;
-use Grav\Framework\RequestHandler\Exception\RequestException;
 use Grav\Plugin\Admin\Admin;
-use http\Client\Request;
-use Psr\Http\Message\ResponseInterface;
 use RocketTheme\Toolbox\Event\Event;
 
 class PageInjectPlugin extends Plugin
@@ -55,6 +51,7 @@ class PageInjectPlugin extends Plugin
         $this->enable([
             'onPageContentRaw' => ['onPageContentRaw', 0],
             'onPagesInitialized' => ['onPagesInitialized', 0],
+            'onShortcodeHandlers' => ['onShortcodeHandlers', 0],
         ]);
     }
 
@@ -72,7 +69,7 @@ class PageInjectPlugin extends Plugin
             if (!$controller->authorizeTask('pageInject', ['admin.pages.read', 'admin.super'])) {
                 http_response_code(401);
                 $json_response = [
-                    'status'  => 'error',
+                    'status' => 'error',
                     'message' => '<i class="fa fa-warning"></i> Unable to get PageInject data',
                     'details' => 'Insufficient permissions for this user.'
                 ];
@@ -90,49 +87,15 @@ class PageInjectPlugin extends Plugin
         }
     }
 
-    protected function getPageInjectData()
+    public function onShortcodeHandlers()
     {
-        $request = $this->grav['request'];
-        $data = $request->getParsedBody();
-        $page_routes = $data['routes'] ?? [];
-
-        /** @var Pages $pages */
-        $pages = Admin::enablePages();
-
-        foreach($page_routes as $route) {
-            /** @var PageInterface */
-            $page = $pages->find($route);
-
-            if (!$page) {
-                $data = [
-                    'status' => 'Error',
-                    'message' => 'Page not found',
-                    'data' => []
-                ];
-            } else {
-                $data = [
-                    'status'  => 'success',
-                    'message' => 'Page found',
-                    'data' => [
-                        'title' => $page->title(),
-                        'route' => $page->route(),
-                        'modified' => $page->modified(),
-                        'template' => $page->template(),
-                    ]
-                ];
-            }
-
-            $json['data'][] = $data;
-            $json['available_templates'] = $pages->pageTypes();
-        }
-
-        return $json;
+        $this->grav['shortcode']->registerAllShortcodes(__DIR__ . '/classes/shortcodes');
     }
 
     /**
      * Add content after page content was read into the system.
      *
-     * @param  Event  $event An event object, when `onPageContentRaw` is fired.
+     * @param Event $event An event object, when `onPageContentRaw` is fired.
      */
     public function onPageContentRaw(Event $event)
     {
@@ -151,77 +114,43 @@ class PageInjectPlugin extends Plugin
 
                 $search = $matches[0];
                 $type = $matches[1];
-                $page_path = $matches[3] ?: $matches[2];
-                $template = $matches[4];
+                $page_path = $matches[2];
 
                 preg_match('#remote://(.*?)/(.*)#', $page_path, $remote_matches);
 
                 if (isset($remote_matches[1]) && $remote_matches[2]) {
-                    $remote_injections = $this->grav['config']->get('plugins.page-inject.remote_injections', []);
+                    $remote_injections = $config->get('remote_injections', []);
                     $remote_url = $remote_injections[$remote_matches[1]] ?? null;
                     if ($remote_url) {
-                        $url = $remote_url . '/?action=contentInject&path=/' . urlencode($remote_matches[2]);
-                        $response = \Grav\Common\HTTP\Response::get($url);
-                        return $response;
+                        $url = $remote_url . '/?action=' . $type . '&path=/' . urlencode($remote_matches[2]);
+                        return \Grav\Common\HTTP\Response::get($url);
                     }
                 } else {
-                    $page_path = Uri::convertUrl($page, $page_path, 'link', false, true);
-
-                $inject = $page->find($page_path);
-                if ($inject) {
-                    // Force HTML to avoid issues with News Feeds
-                    $inject->templateFormat('html');
-                    if ($type == 'page-inject') {
-                        if ($template) {
-                            $inject->template($template);
-                        }
-                        $inject->modularTwig(true);
-                        $replace = $inject->content();
-
-                    } else {
-                        if ($config->get('processed_content')) {
-                            $replace = $inject->content();
-                        } else {
-                            $replace = $inject->rawMarkdown();
-                        }
+                    $replace = $this->getInjectedPageContent($type, $page_path, $page, $config->get('processed_content'));
+                    if ($replace) {
+                        return str_replace($search, $replace, $search);
                     }
-
-                } else {
-                    // replace with what you started with
-                    $replace = $matches[0];
                 }
-
-                // do the replacement
-                return str_replace($search, $replace, $search);
-                }
-
-
+                return $search;
             };
 
             // set the parsed content back into as raw content
-            $page->setRawContent($this->parseInjectLinks($raw, $function));
+            $processed_content = $this->parseInjectLinks($raw, $function);
+            $page->setRawContent($processed_content);
         }
     }
 
     public function onPagesInitialized()
     {
         $uri = $this->grav['uri'];
-        $action = $uri->query('action');
+        $type = $uri->query('action');
         $path = $uri->query('path');
-        if ($action === 'contentInject' && isset($path)) {
-            $pages = $this->grav['pages'];
-            $page = $pages->find($path);
-            if ($page instanceof PageInterface && $page->published()) {
-               echo $page->content();
-               exit;
-            }
-        }
-    }
+        // Handle remote calls
+        if (in_array($type, ['page-inject','content-inject']) && isset($path)) {
+           echo $this->getInjectedPageContent($type, $path);
+           exit;
 
-    protected function parseInjectLinks($content, $function)
-    {
-        $regex = '/\[plugin:(content-inject|page-inject)\]\(((.*)\?template=(.*)|(.*))\)/i';
-        return preg_replace_callback($regex, $function, $content);
+        }
     }
 
     public function registerNextGenEditorPlugin($event) {
@@ -234,4 +163,89 @@ class PageInjectPlugin extends Plugin
         $event['plugins']  = $plugins;
         return $event;
     }
+
+    public static function getInjectedPageContent($type, $path, $page = null, $processed_content = null): string
+    {
+        $pages = Grav::instance()['pages'];
+        $page = $page ?? Grav::instance()['page'];
+
+        if (is_null($processed_content)) {
+            $header = new Data((array) $page->header());
+            $processed_content = $header->get('page-inject.processed_content') ?? Grav::instance()['config']->get('processed_content');
+        }
+        preg_match('/(.*)\?template=(.*)|(.*)/i', $path, $template_matches);
+
+        $path = $template_matches[1] && $template_matches[2] ? $template_matches[1] : $path;
+        $template = $template_matches[2];
+        $replace = null;
+        $page_path = Uri::convertUrl($page, $path, 'link', false, true);
+
+        $inject = $pages->find($page_path);
+        if ($inject instanceof PageInterface && $inject->published()) {
+            // Force HTML to avoid issues with News Feeds
+            $inject->templateFormat('html');
+            if ($type == 'page-inject') {
+                if ($template) {
+                    $inject->template($template);
+                }
+                $inject->modularTwig(true);
+                $replace = $inject->content();
+
+            } else {
+                if ($processed_content) {
+                    $replace = $inject->content();
+                } else {
+                    $replace = $inject->rawMarkdown();
+                }
+            }
+        }
+
+        return $replace;
+    }
+
+    protected function getPageInjectData()
+    {
+        $request = $this->grav['request'];
+        $data = $request->getParsedBody();
+        $page_routes = $data['routes'] ?? [];
+
+        /** @var Pages $pages */
+        $pages = Admin::enablePages();
+
+        foreach ($page_routes as $route) {
+            /** @var PageInterface */
+            $page = $pages->find($route);
+
+            if (!$page) {
+                $data = [
+                    'status' => 'Error',
+                    'message' => 'Page not found',
+                    'data' => []
+                ];
+            } else {
+                $data = [
+                    'status' => 'success',
+                    'message' => 'Page found',
+                    'data' => [
+                        'title' => $page->title(),
+                        'route' => $page->route(),
+                        'modified' => $page->modified(),
+                        'template' => $page->template(),
+                    ]
+                ];
+            }
+
+            $json['data'][] = $data;
+            $json['available_templates'] = $pages->pageTypes();
+        }
+
+        return $json;
+    }
+
+    protected function parseInjectLinks($content, $function)
+    {
+        $regex = '/\[plugin:(content-inject|page-inject)\]\((.*)\)/i';
+        return preg_replace_callback($regex, $function, $content);
+    }
+
 }

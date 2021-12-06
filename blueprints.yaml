@@ -1,8 +1,8 @@
 name: Page Inject
 type: plugin
 slug: page-inject
-version: 2.0.0
-description: "**Page Inject** is a powerful plugin that lets you inject entire pages or page content into other pages using simple markdown syntax"
+version: 2.1.0
+description: "**Page Inject** is a powerful plugin that lets you inject entire pages or page content into other pages using simple markdown-style or shortcode syntax"
 icon: trello
 author:
   name: Team Grav
