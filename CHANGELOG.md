@@ -1,3 +1,11 @@
+# v2.1.1
+## 12/09/2021
+
+1. [](#improved)
+   * Added a modular example in the README.md
+2. [](#bugfix)
+   * Allow null returned by `getInjectedPageContent()`
+
 # v2.1.0
 ## 12/06/2021
 
