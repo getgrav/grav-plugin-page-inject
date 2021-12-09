@@ -101,6 +101,16 @@ And for page-injection, you can specify a custom Twig template to render with:
 [page-inject path="/route/to/page" template="foo" /]
 ```
 
+## Modular Pages
+
+One of the most useful scenarios for using Page Inject plugin is for pulling modular pages into your content.  This is because it allows you to sprinkle structure, pre-rendered HTML into the middle of your content.  This allows you to create complex content layouts with a combination of straight markdown content, with blocks of more structured output.  For example imagine being able to display a "Contact Us" form in the middle of a case study.  Or perhaps a customer quotes module in the middle of a long article about your customer success stories.  A quick example of this might be:
+
+```markdown
+[plugin:page-inject](/modular/_callout)
+```
+
+The path will be the **Page route** for the page, and modular pages are typically distinguished by the `_` prefix. You would typically want to use a **page-inject** for this as you want the modular page pre-rendered with the associated Twig template.  You could still just display the content with **content-inject**. 
+
 ## Remote Injects
 
 It is now possible to retrieve remote content from another Grav instance as long as both of the sites are running the latest version of the `page-inject` plugin.  First in the **client** Grav instance you need to define a remote connection to another Grav **server** in the plugin configuration.  For example:

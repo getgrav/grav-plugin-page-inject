@@ -164,7 +164,7 @@ class PageInjectPlugin extends Plugin
         return $event;
     }
 
-    public static function getInjectedPageContent($type, $path, $page = null, $processed_content = null): string
+    public static function getInjectedPageContent($type, $path, $page = null, $processed_content = null): ?string
     {
         $pages = Grav::instance()['pages'];
         $page = $page ?? Grav::instance()['page'];
