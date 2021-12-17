@@ -1,3 +1,9 @@
+# v2.1.2
+## mm/dd/2021
+
+1. [](#improved)
+   * PHPStan fixes
+
 # v2.1.1
 ## 12/09/2021
 

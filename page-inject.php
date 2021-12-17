@@ -110,7 +110,7 @@ class PageInjectPlugin extends Plugin
             $raw = $page->getRawContent();
 
             // build an anonymous function to pass to `parseLinks()`
-            $function = function ($matches) use (&$page, &$twig, &$config) {
+            $function = function ($matches) use (&$page, &$config) {
 
                 $search = $matches[0];
                 $type = $matches[1];
@@ -208,6 +208,7 @@ class PageInjectPlugin extends Plugin
         $request = $this->grav['request'];
         $data = $request->getParsedBody();
         $page_routes = $data['routes'] ?? [];
+        $json = [];
 
         /** @var Pages $pages */
         $pages = Admin::enablePages();
