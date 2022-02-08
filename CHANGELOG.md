@@ -1,3 +1,9 @@
+# v2.1.3
+## 02/08/2022
+
+1. [](#improved)
+   * Shortcodes should use `rawHanders()` to support shortcodes/markdown
+
 # v2.1.2
 ## 02/08/2022
 
