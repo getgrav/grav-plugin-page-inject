@@ -17,6 +17,7 @@ use Grav\Common\Page\Pages;
 use Grav\Common\Plugin;
 use Grav\Common\Page\Page;
 use Grav\Common\Uri;
+use Grav\Common\Utils;
 use Grav\Plugin\Admin\Admin;
 use RocketTheme\Toolbox\Event\Event;
 
@@ -179,6 +180,8 @@ class PageInjectPlugin extends Plugin
         $template = $template_matches[2];
         $replace = null;
         $page_path = Uri::convertUrl($page, $path, 'link', false, true);
+        // Cleanup any current path (`./`) references
+        $page_path = str_replace('/./', '/', $page_path);
 
         $inject = $pages->find($page_path);
         if ($inject instanceof PageInterface && $inject->published()) {
