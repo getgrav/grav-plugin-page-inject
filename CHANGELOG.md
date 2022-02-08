@@ -1,3 +1,10 @@
+# v2.1.4
+## 02/08/2022
+
+2. [](#bugfix)
+   * Fixed bad configuration reference for `processed_content`
+   * Set `processed_content` to false by default - so `content-inject` doesn't try to render with twig
+
 # v2.1.3
 ## 02/08/2022
 

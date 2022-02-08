@@ -172,7 +172,7 @@ class PageInjectPlugin extends Plugin
 
         if (is_null($processed_content)) {
             $header = new Data((array) $page->header());
-            $processed_content = $header->get('page-inject.processed_content') ?? Grav::instance()['config']->get('processed_content');
+            $processed_content = $header->get('page-inject.processed_content') ?? Grav::instance()['config']->get('plugins.page-inject.processed_content', true);
         }
         preg_match('/(.*)\?template=(.*)|(.*)/i', $path, $template_matches);
 
