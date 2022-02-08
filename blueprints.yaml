@@ -44,7 +44,7 @@ form:
     processed_content:
       type: toggle
       label: Processed Content
-      highlight: 1
+      highlight: 0
       default: 0
       options:
         1: Enabled
