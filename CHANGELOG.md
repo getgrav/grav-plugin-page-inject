@@ -1,3 +1,10 @@
+# v2.1.2
+## 02/08/2022
+
+1. [](#improved)
+   * PHPStan fixes
+   * Support `./` in page paths
+
 # v2.1.1
 ## 12/09/2021
 
