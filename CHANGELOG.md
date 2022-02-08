@@ -1,3 +1,9 @@
+# v2.1.4
+## mm/dd/2022
+
+2. [](#bugfix)
+   * Fixed bad configuration reference for `processed_content`
+
 # v2.1.3
 ## 02/08/2022
 
