@@ -1,3 +1,9 @@
+# v2.1.5
+## 03/28/2022
+
+2. [](#bugfix)
+   * Fixed an issue with relative paths for page-inject when processing
+
 # v2.1.4
 ## 02/08/2022
 
