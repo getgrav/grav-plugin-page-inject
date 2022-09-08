@@ -176,7 +176,7 @@ class PageInjectPlugin extends Plugin
         }
         preg_match('/(.*)\?template=(.*)|(.*)/i', $path, $template_matches);
 
-        $path = $template_matches[1] && $template_matches[2] ? $template_matches[1] : $path;
+        $path = $template_matches[1] && $template_matches[2] && $template_matches[3] ? $template_matches[1] : $path;
         $template = $template_matches[2];
         $replace = null;
         $page_path = Uri::convertUrl($page, $path, 'link', false, true);
@@ -184,7 +184,13 @@ class PageInjectPlugin extends Plugin
         $page_path = str_replace('/./', '/', $page_path);
 
         $inject = $pages->find($page_path);
-        if ($inject instanceof PageInterface && $inject->published()) {
+
+        if ($type == 'html-inject') {
+            if (file_exists($page->getMediaFolder() . '/' . $path)) {
+                $replace = file_get_contents($page->getMediaFolder() . '/' . $path);
+            }
+        }
+        else if ($inject instanceof PageInterface && $inject->published()) {
             // Force HTML to avoid issues with News Feeds
             $inject->templateFormat('html');
             if ($type == 'page-inject') {
@@ -248,7 +254,7 @@ class PageInjectPlugin extends Plugin
 
     protected function parseInjectLinks($content, $function)
     {
-        $regex = '/\[plugin:(content-inject|page-inject)\]\((.*)\)/i';
+        $regex = '/\[plugin:(content-inject|page-inject|html-inject)\]\((.*)\)/i';
         return preg_replace_callback($regex, $function, $content);
     }
 
