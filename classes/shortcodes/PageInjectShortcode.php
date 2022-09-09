@@ -18,5 +18,11 @@ class PageInjectShortcode extends Shortcode
             $path = $sc->getParameter('path') ?? $sc->getBbCode();
             return PageInjectPlugin::getInjectedPageContent('content-inject', $path, $this->shortcode->getPage());
         });
+
+        $this->shortcode->getRawHandlers()->add('html-inject', function(ShortcodeInterface $sc) {
+            $path = $sc->getParameter('path') ?? $sc->getBbCode();
+            return PageInjectPlugin::getInjectedPageContent('html-inject', $path, $this->shortcode->getPage());
+        });       
+        
     }
 }
