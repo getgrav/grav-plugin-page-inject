@@ -165,10 +165,15 @@ class PageInjectPlugin extends Plugin
         return $event;
     }
 
-    public static function getInjectedPageContent($type, $path, $page = null, $processed_content = null): ?string
+    public static function getInjectedPageContent($type, $path, $args = null, $page = null, $processed_content = null): ?string
     {
         $pages = Grav::instance()['pages'];
         $page = $page ?? Grav::instance()['page'];
+
+        $argsList = $args!==null ? explode(';', $args) : array();
+        for ($i=0; $i < count($argsList); $i++) { 
+            $argsList[$i] = explode(':', $argsList[$i]);
+        }
 
         if (is_null($processed_content)) {
             $header = new Data((array) $page->header());
@@ -184,6 +189,15 @@ class PageInjectPlugin extends Plugin
         $page_path = str_replace('/./', '/', $page_path);
 
         $inject = $pages->find($page_path);
+
+        for ($i=0; $i < count($argsList); $i++) { 
+            $arg = (object)[
+                'key'=> $argsList[$i][0],
+                'value'=> $argsList[$i][1]
+            ];
+            $inject->rawMarkdown(str_replace('$'.$arg->key.'$', $arg->value, $inject->rawMarkdown()));
+        }
+
         if ($inject instanceof PageInterface && $inject->published()) {
             // Force HTML to avoid issues with News Feeds
             $inject->templateFormat('html');
