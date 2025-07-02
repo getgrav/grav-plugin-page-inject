@@ -223,9 +223,9 @@ class PageInjectPlugin extends Plugin
             'group' => 'Page Inject',
             'icon' => '📄',
             'attributes' => [
-                'route' => [
+                'path' => [
                     'type' => 'page',  // Custom type for page picker
-                    'title' => 'Page Route',
+                    'title' => 'Page Path',
                     'required' => true,
                     'placeholder' => 'Select a page to inject',
                     'skipTitleAttribute' => true  // Don't save title as attribute
@@ -237,16 +237,16 @@ class PageInjectPlugin extends Plugin
                     'required' => false
                 ]
             ],
-            'titleBarAttributes' => ['route'],
+            'titleBarAttributes' => ['path'],
             'hasContent' => false,
             'customRenderer' => 'function(blockData, config) {
-                if (!blockData.attributes || !blockData.attributes.route) {
+                if (!blockData.attributes || !blockData.attributes.path) {
                     return "<div class=\"page-inject-placeholder\">📄 Page Injection<br><small>No page selected</small></div>";
                 }
                 
-                const route = blockData.attributes.route;
+                const path = blockData.attributes.path;
                 const template = blockData.attributes.template;
-                const title = blockData.attributes.title || route;
+                const title = blockData.attributes.title || path;
                 
                 let html = "<div class=\"page-inject-block\">";
                 html += "<div class=\"page-inject-header\">";
@@ -255,7 +255,7 @@ class PageInjectPlugin extends Plugin
                 html += "</div>";
                 html += "<div class=\"page-inject-content\">";
                 html += "<div class=\"page-inject-title\">" + title + "</div>";
-                html += "<div class=\"page-inject-route\">" + route + "</div>";
+                html += "<div class=\"page-inject-route\">" + path + "</div>";
                 if (template) {
                     html += "<div class=\"page-inject-template\">Template: " + template + "</div>";
                 }
@@ -277,23 +277,23 @@ class PageInjectPlugin extends Plugin
             'group' => 'Page Inject',
             'icon' => '📝',
             'attributes' => [
-                'route' => [
+                'path' => [
                     'type' => 'page',  // Custom type for page picker
-                    'title' => 'Page Route',
+                    'title' => 'Page Path',
                     'required' => true,
                     'placeholder' => 'Select a page to inject content from',
                     'skipTitleAttribute' => true  // Don't save title as attribute
                 ]
             ],
-            'titleBarAttributes' => ['route'],
+            'titleBarAttributes' => ['path'],
             'hasContent' => false,
             'customRenderer' => 'function(blockData, config) {
-                if (!blockData.attributes || !blockData.attributes.route) {
+                if (!blockData.attributes || !blockData.attributes.path) {
                     return "<div class=\"content-inject-placeholder\">📝 Content Injection<br><small>No page selected</small></div>";
                 }
                 
-                const route = blockData.attributes.route;
-                const title = blockData.attributes.title || route;
+                const path = blockData.attributes.path;
+                const title = blockData.attributes.title || path;
                 
                 let html = "<div class=\"content-inject-block\">";
                 html += "<div class=\"content-inject-header\">";
@@ -302,7 +302,7 @@ class PageInjectPlugin extends Plugin
                 html += "</div>";
                 html += "<div class=\"content-inject-content\">";
                 html += "<div class=\"content-inject-title\">" + title + "</div>";
-                html += "<div class=\"content-inject-route\">" + route + "</div>";
+                html += "<div class=\"content-inject-route\">" + path + "</div>";
                 html += "</div>";
                 html += "</div>";
                 
