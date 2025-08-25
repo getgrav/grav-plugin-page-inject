@@ -1,3 +1,11 @@
+# v2.2.0
+## 08/25/2025
+
+1. [](#new)
+   * Added support for **Editor Pro** integration 
+1. [](#bugfix)
+    * Fix route -> path issues
+
 # v2.1.6
 ## 03/22/2023
 
