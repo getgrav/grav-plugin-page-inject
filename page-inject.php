@@ -33,7 +33,7 @@ class PageInjectPlugin extends Plugin
     {
         return [
             'onPluginsInitialized' => ['onPluginsInitialized', 0],
-            'registerNextGenEditorPlugin' => ['registerNextGenEditorPlugin', 0],
+            'onEditorProShortcodeRegister' => ['onEditorProShortcodeRegister', 0],
         ];
     }
 
@@ -45,6 +45,7 @@ class PageInjectPlugin extends Plugin
         if ($this->isAdmin()) {
             $this->enable([
                 'onAdminTaskExecute' => ['onAdminTaskExecute', 0],
+                'onAssetsInitialized' => ['onAssetsInitialized', 0],
             ]);
             return;
         }
@@ -85,12 +86,64 @@ class PageInjectPlugin extends Plugin
 
             echo json_encode($json_response);
             exit;
+        } elseif ($e['method'] === 'taskListPages') {
+            header('Content-type: application/json');
+            header('Cache-Control: no-cache, no-store, must-revalidate');
+            $controller = $e['controller'];
+
+            if (!$controller->authorizeTask('listPages', ['admin.pages.read', 'admin.super'])) {
+                http_response_code(401);
+                echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
+                exit;
+            }
+
+            // Use Admin to properly initialize pages
+            $pages = Admin::enablePages();
+            
+            $pageList = [];
+            
+            // Get all pages
+            $allPages = $pages->all();
+            
+            if ($allPages) {
+                foreach ($allPages as $page) {
+                    if ($page && $page->routable()) {
+                        $pageList[] = [
+                            'route' => $page->route(),
+                            'title' => $page->title() ?: $page->slug()
+                        ];
+                    }
+                }
+            }
+            
+            // Sort by route
+            usort($pageList, function($a, $b) {
+                return strcmp($a['route'], $b['route']);
+            });
+
+            echo json_encode([
+                'status' => 'success', 
+                'pages' => $pageList
+            ]);
+            exit;
         }
     }
 
     public function onShortcodeHandlers()
     {
         $this->grav['shortcode']->registerAllShortcodes(__DIR__ . '/classes/shortcodes');
+    }
+
+    public function onAssetsInitialized()
+    {
+        if ($this->isAdmin()) {
+            // Check if Editor Pro is active
+            $config = $this->grav['config'];
+            if ($config->get('plugins.editor-pro.enabled')) {
+                $assets = $this->grav['assets'];
+                $assets->addCss('plugin://page-inject/editor-pro.css');
+            }
+        }
     }
 
     /**
@@ -154,15 +207,110 @@ class PageInjectPlugin extends Plugin
         }
     }
 
-    public function registerNextGenEditorPlugin($event) {
-        $plugins = $event['plugins'];
 
-        // page-inject
-        $plugins['css'][] = 'plugin://page-inject/nextgen-editor/plugins/page-inject/page-inject.css';
-        $plugins['js'][] = 'plugin://page-inject/nextgen-editor/plugins/page-inject/page-inject.js';
-
-        $event['plugins']  = $plugins;
-        return $event;
+    public function onEditorProShortcodeRegister($event)
+    {
+        $shortcodes = $event['shortcodes'] ?? [];
+        
+        // Register page-inject shortcode
+        $shortcodes[] = [
+            'name' => 'page-inject',
+            'title' => 'Page Injection',
+            'description' => 'Inject an entire page rendered with its template',
+            'type' => 'block',
+            'plugin' => 'page-inject',
+            'category' => 'content',
+            'group' => 'Page Inject',
+            'icon' => '📄',
+            'attributes' => [
+                'path' => [
+                    'type' => 'page',  // Custom type for page picker
+                    'title' => 'Page Path',
+                    'required' => true,
+                    'placeholder' => 'Select a page to inject',
+                    'skipTitleAttribute' => true  // Don't save title as attribute
+                ],
+                'template' => [
+                    'type' => 'text',
+                    'title' => 'Custom Template (optional)',
+                    'placeholder' => 'Leave empty to use page\'s default template',
+                    'required' => false
+                ]
+            ],
+            'titleBarAttributes' => ['path'],
+            'hasContent' => false,
+            'customRenderer' => 'function(blockData, config) {
+                if (!blockData.attributes || !blockData.attributes.path) {
+                    return "<div class=\"page-inject-placeholder\">📄 Page Injection<br><small>No page selected</small></div>";
+                }
+                
+                const path = blockData.attributes.path;
+                const template = blockData.attributes.template;
+                const title = blockData.attributes.title || path;
+                
+                let html = "<div class=\"page-inject-block\">";
+                html += "<div class=\"page-inject-header\">";
+                html += "<span class=\"page-inject-icon\">📄</span>";
+                html += "<span class=\"page-inject-type\">Page Injection</span>";
+                html += "</div>";
+                html += "<div class=\"page-inject-content\">";
+                html += "<div class=\"page-inject-title\">" + title + "</div>";
+                html += "<div class=\"page-inject-route\">" + path + "</div>";
+                if (template) {
+                    html += "<div class=\"page-inject-template\">Template: " + template + "</div>";
+                }
+                html += "</div>";
+                html += "</div>";
+                
+                return html;
+            }'
+        ];
+        
+        // Register content-inject shortcode
+        $shortcodes[] = [
+            'name' => 'content-inject',
+            'title' => 'Content Injection',
+            'description' => 'Inject just the content of a page without its template',
+            'type' => 'block',
+            'plugin' => 'page-inject',
+            'category' => 'content',
+            'group' => 'Page Inject',
+            'icon' => '📝',
+            'attributes' => [
+                'path' => [
+                    'type' => 'page',  // Custom type for page picker
+                    'title' => 'Page Path',
+                    'required' => true,
+                    'placeholder' => 'Select a page to inject content from',
+                    'skipTitleAttribute' => true  // Don't save title as attribute
+                ]
+            ],
+            'titleBarAttributes' => ['path'],
+            'hasContent' => false,
+            'customRenderer' => 'function(blockData, config) {
+                if (!blockData.attributes || !blockData.attributes.path) {
+                    return "<div class=\"content-inject-placeholder\">📝 Content Injection<br><small>No page selected</small></div>";
+                }
+                
+                const path = blockData.attributes.path;
+                const title = blockData.attributes.title || path;
+                
+                let html = "<div class=\"content-inject-block\">";
+                html += "<div class=\"content-inject-header\">";
+                html += "<span class=\"content-inject-icon\">📝</span>";
+                html += "<span class=\"content-inject-type\">Content Injection</span>";
+                html += "</div>";
+                html += "<div class=\"content-inject-content\">";
+                html += "<div class=\"content-inject-title\">" + title + "</div>";
+                html += "<div class=\"content-inject-route\">" + path + "</div>";
+                html += "</div>";
+                html += "</div>";
+                
+                return html;
+            }'
+        ];
+        
+        $event['shortcodes'] = $shortcodes;
     }
 
     public static function getInjectedPageContent($type, $path, $page = null, $processed_content = null): ?string
