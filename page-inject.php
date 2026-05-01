@@ -241,26 +241,22 @@ class PageInjectPlugin extends Plugin
             'hasContent' => false,
             'customRenderer' => 'function(blockData, config) {
                 if (!blockData.attributes || !blockData.attributes.path) {
-                    return "<div class=\"page-inject-placeholder\">📄 Page Injection<br><small>No page selected</small></div>";
+                    return "<span class=\"page-inject-placeholder\">📄 Page Injection - No page selected</span>";
                 }
                 
                 const path = blockData.attributes.path;
                 const template = blockData.attributes.template;
                 const title = blockData.attributes.title || path;
                 
-                let html = "<div class=\"page-inject-block\">";
-                html += "<div class=\"page-inject-header\">";
+                let html = "<span class=\"page-inject-block\">";
                 html += "<span class=\"page-inject-icon\">📄</span>";
                 html += "<span class=\"page-inject-type\">Page Injection</span>";
-                html += "</div>";
-                html += "<div class=\"page-inject-content\">";
-                html += "<div class=\"page-inject-title\">" + title + "</div>";
-                html += "<div class=\"page-inject-route\">" + path + "</div>";
+                html += "<span class=\"page-inject-separator\">·</span>";
+                html += "<span class=\"page-inject-route\">" + path + "</span>";
                 if (template) {
-                    html += "<div class=\"page-inject-template\">Template: " + template + "</div>";
+                    html += "<span class=\"page-inject-template\"> (Template: " + template + ")</span>";
                 }
-                html += "</div>";
-                html += "</div>";
+                html += "</span>";
                 
                 return html;
             }'
@@ -289,22 +285,18 @@ class PageInjectPlugin extends Plugin
             'hasContent' => false,
             'customRenderer' => 'function(blockData, config) {
                 if (!blockData.attributes || !blockData.attributes.path) {
-                    return "<div class=\"content-inject-placeholder\">📝 Content Injection<br><small>No page selected</small></div>";
+                    return "<span class=\"content-inject-placeholder\">📝 Content Injection - No page selected</span>";
                 }
                 
                 const path = blockData.attributes.path;
                 const title = blockData.attributes.title || path;
                 
-                let html = "<div class=\"content-inject-block\">";
-                html += "<div class=\"content-inject-header\">";
+                let html = "<span class=\"content-inject-block\">";
                 html += "<span class=\"content-inject-icon\">📝</span>";
                 html += "<span class=\"content-inject-type\">Content Injection</span>";
-                html += "</div>";
-                html += "<div class=\"content-inject-content\">";
-                html += "<div class=\"content-inject-title\">" + title + "</div>";
-                html += "<div class=\"content-inject-route\">" + path + "</div>";
-                html += "</div>";
-                html += "</div>";
+                html += "<span class=\"content-inject-separator\">·</span>";
+                html += "<span class=\"content-inject-route\">" + path + "</span>";
+                html += "</span>";
                 
                 return html;
             }'
