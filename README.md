@@ -101,6 +101,19 @@ And for page-injection, you can specify a custom Twig template to render with:
 [page-inject path="/route/to/page" template="foo" /]
 ```
 
+Also you can specify arguments that should be transport to injected content:
+```markdown
+[content-inject path="/route/to/page" args="foo:ba ar;test:hello" /]
+```
+and inside content of injected page there should be the same keys that will be provided in parameter `args` with characters `$` as prefix and suffix, for example:
+```markdown
+this is amazing content: $foo$ with a lot of $test$
+```
+The characters `$` will be replaced as well, so the result of rendering will be:
+```markdown
+this is amazing content: ba ar with a lot of hello
+```
+
 ## Modular Pages
 
 One of the most useful scenarios for using Page Inject plugin is for pulling modular pages into your content.  This is because it allows you to sprinkle structure, pre-rendered HTML into the middle of your content.  This allows you to create complex content layouts with a combination of straight markdown content, with blocks of more structured output.  For example imagine being able to display a "Contact Us" form in the middle of a case study.  Or perhaps a customer quotes module in the middle of a long article about your customer success stories.  A quick example of this might be:
