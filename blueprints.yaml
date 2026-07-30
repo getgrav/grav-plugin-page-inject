@@ -1,7 +1,7 @@
 name: Page Inject
 type: plugin
 slug: page-inject
-version: 2.2.1
+version: 2.2.2
 description: "**Page Inject** is a powerful plugin that lets you inject entire pages or page content into other pages using simple markdown-style or shortcode syntax"
 icon: trello
 author:
@@ -55,6 +55,18 @@ form:
       validate:
         type: bool
       help: If enabled the page is pre-rendered before being injected, so relative paths work correctly
+
+    remote_receiver:
+      type: toggle
+      label: Remote Receiver
+      highlight: 0
+      default: 0
+      options:
+        1: Enabled
+        0: Disabled
+      validate:
+        type: bool
+      help: "Allow this site to serve page content to remote injections via the `?action=...&path=...` endpoint. Disabled by default. Access-restricted pages are never served, even when enabled."
 
     remote_injections:
       type: array

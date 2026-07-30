@@ -27,7 +27,7 @@ You should now have all the plugin files under
 ```
 enabled: true
 active: true
-processed_content: true
+processed_content: false
 remote_injections:
 ```
 
@@ -35,7 +35,7 @@ If you need to change any value, then the best process is to copy the [page-inje
 
 The `active` option allows you to enable/disable the plugin site-wide, and then enable it on page via Page Config overrides. This is useful to optimize performance.
 
-the `processed_content` option means the page is pre-rendered before being injected.  This is the default behavior and means that relative image links and other path-sensitive content works correctly.  You can however set this to `false` and then the raw markdown is inject and processed along with the rest of the current page. This is relevant for `content-inject` links **only**.
+the `processed_content` option means the page is pre-rendered before being injected, so that relative image links and other path-sensitive content works correctly.  It defaults to `false`, which injects the raw markdown of the target page and processes it along with the rest of the current page. This is relevant for `content-inject` links **only**.
 
 ### Page Config
 
@@ -110,6 +110,71 @@ One of the most useful scenarios for using Page Inject plugin is for pulling mod
 ```
 
 The path will be the **Page route** for the page, and modular pages are typically distinguished by the `_` prefix. You would typically want to use a **page-inject** for this as you want the modular page pre-rendered with the associated Twig template.  You could still just display the content with **content-inject**. 
+
+## Grav 2.0 Notes
+
+Grav 2.0 changed two defaults that affect what injected content is allowed to do. Neither is a page-inject setting, but both show up first when you inject content, so they are worth knowing about. If content that worked in Grav 1.7 now renders as literal text after upgrading, it is almost always one of these two.
+
+### Twig in page content is gated
+
+Grav 2.0 added a site-wide master gate for Twig inside page content, and it is **off** on new installs. While it is off, `process: twig: true` in page frontmatter is ignored and any `{{ }}` / `{% %}` in your content renders as literal text. The Twig sandbox is a separate, later layer, so disabling the sandbox does not open this gate.
+
+Enable it in **Configuration → Security → "Process Twig in Content"**, or in `user/config/security.yaml`:
+
+```yaml
+twig_content:
+  process_enabled: true
+```
+
+Then make sure the page itself asks for Twig processing, either site-wide in `user/config/system.yaml` or per page in frontmatter:
+
+```yaml
+process:
+  markdown: true
+  twig: true
+```
+
+An explicit `pages.process.twig: false` in `user/config/system.yaml` (a common Grav 1.7 leftover) overrides the gate, so check there too.
+
+Whenever the gate blocks a page, Grav writes a line to `logs/security.log`:
+
+```
+[TwigContentGate] blocked source=content route=/your/page
+```
+
+### Raw `<style>`, `<script>` and friends are escaped
+
+Grav 2.0 enables the GFM "tagfilter" extension, which escapes a fixed denylist of raw HTML tags in markdown output: `script`, `style`, `iframe`, `title`, `textarea`, `xmp`, `noembed`, `noframes`, `plaintext`. A `<style>` block inside injected content therefore renders as visible text, while ordinary tags like `<ul>` and `<div>` are untouched.
+
+Turn it off in **Configuration → System** ("GFM Tag Filter"), or in `user/config/system.yaml`:
+
+```yaml
+pages:
+  markdown:
+    gfm:
+      tagfilter: false
+```
+
+It can also be set per page in frontmatter, using the same `markdown:` block.
+
+Before reaching for this, consider moving the CSS into your theme's stylesheet instead. Style rules in page content are re-parsed on every render and the tagfilter exists to keep injected markup from introducing active tags.
+
+### Where each setting has to go
+
+Injected content is handed back to the page doing the injecting and parsed again as part of that page, which means the two settings live in different places:
+
+| Setting | Applies on |
+| --- | --- |
+| `markdown.gfm.tagfilter` | the **injecting** page (or site-wide). Setting it only on the injected page is not enough, the injecting page re-escapes the tags |
+| `process.twig` | the page that **owns the content**: the injected page when `processed_content` is `true`, the injecting page when it is `false` (the default) |
+
+### Injecting a regular page with `page-inject`
+
+`[plugin:page-inject]` renders the target page with its Twig template. If that target is a regular page using a full template such as `default.html.twig`, the template extends your theme's base and you will get an entire HTML document injected into the middle of your content. This is why page-inject is best paired with modular pages, or with an explicit template:
+
+```markdown
+[plugin:page-inject](/route/to/page?template=modular/text)
+```
 
 ## Remote Injects
 
