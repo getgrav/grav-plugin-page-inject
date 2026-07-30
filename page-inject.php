@@ -196,12 +196,21 @@ class PageInjectPlugin extends Plugin
 
     public function onPagesInitialized()
     {
+        // The remote-injection receiver is opt-in and disabled by default. It
+        // serves page content to anonymous remote callers, so a site must
+        // explicitly enable it before this endpoint will respond.
+        if (!$this->config->get('plugins.page-inject.remote_receiver', false)) {
+            return;
+        }
+
         $uri = $this->grav['uri'];
         $type = $uri->query('action');
         $path = $uri->query('path');
         // Handle remote calls
         if (in_array($type, ['page-inject','content-inject']) && isset($path)) {
-           echo $this->getInjectedPageContent($type, $path);
+           // Enforce the injected page's access rules so restricted pages are
+           // not exposed through this unauthenticated endpoint.
+           echo $this->getInjectedPageContent($type, $path, null, null, true);
            exit;
 
         }
@@ -305,14 +314,15 @@ class PageInjectPlugin extends Plugin
         $event['shortcodes'] = $shortcodes;
     }
 
-    public static function getInjectedPageContent($type, $path, $page = null, $processed_content = null): ?string
+    public static function getInjectedPageContent($type, $path, $page = null, $processed_content = null, $enforce_access = false): ?string
     {
-        $pages = Grav::instance()['pages'];
-        $page = $page ?? Grav::instance()['page'];
+        $grav = Grav::instance();
+        $pages = $grav['pages'];
+        $page = $page ?? $grav['page'];
 
         if (is_null($processed_content)) {
             $header = new Data((array) $page->header());
-            $processed_content = $header->get('page-inject.processed_content') ?? Grav::instance()['config']->get('plugins.page-inject.processed_content', true);
+            $processed_content = $header->get('page-inject.processed_content') ?? $grav['config']->get('plugins.page-inject.processed_content', true);
         }
         preg_match('/(.*)\?template=(.*)|(.*)/i', $path, $template_matches);
 
@@ -325,6 +335,15 @@ class PageInjectPlugin extends Plugin
 
         $inject = $pages->find($page_path);
         if ($inject instanceof PageInterface && $inject->published()) {
+            // When serving through the unauthenticated remote receiver, honor
+            // the injected page's access rules (login plugin) so login-gated
+            // pages are not exposed to anonymous callers.
+            if ($enforce_access && isset($grav['login'])) {
+                $user = $grav['user'] ?? null;
+                if (!$user || !$grav['login']->isUserAuthorizedForPage($user, $inject)) {
+                    return null;
+                }
+            }
             // Force HTML to avoid issues with News Feeds
             $inject->templateFormat('html');
             if ($type == 'page-inject') {
